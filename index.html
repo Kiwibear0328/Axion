@@ -3,865 +3,531 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Axion Chat</title>
-
 <style>
-:root {
-  --panel: rgba(255,255,255,.88);
-  --text: #302943;
-  --muted: #9690b0;
-  --border: #eee7fa;
-  --accent: #9870ff;
-  --green: #35c99b;
-  --shadow: 0 12px 35px #9983d51a;
+:root{
+ --bg:#f8f5ff;--panel:rgba(255,255,255,.88);--text:#302943;
+ --muted:#9690b0;--border:#eee7fa;--accent:#9870ff;
+ --soft:#f0eaff;--green:#35c99b;--shadow:0 12px 35px #9983d51a;
 }
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  height: 100vh;
-  overflow: hidden;
-  color: var(--text);
-  font-family: Arial, "Malgun Gothic", sans-serif;
-  font-size: 13px;
-  background:
-    radial-gradient(ellipse at 0% 0%, #ffe0f1 0%, transparent 45%),
-    radial-gradient(ellipse at 100% 0%, #dce5ff 0%, transparent 48%),
-    linear-gradient(135deg, #f8eaff, #f8f7ff 55%, #e4eaff);
-  background-attachment: fixed;
+*{box-sizing:border-box}
+body{
+ margin:0;height:100vh;overflow:hidden;color:var(--text);
+ font-family:Arial,"Malgun Gothic",sans-serif;font-size:13px;
+ background:linear-gradient(120deg,#ffe5f3 0%,#f5edff 48%,#dce9ff 100%);
 }
-
-button, input { font: inherit; }
-button { cursor: pointer; }
-
-.app {
-  height: 100vh;
-  display: flex;
-  gap: 18px;
-  padding: 14px 24px;
+button,input{font:inherit}button{cursor:pointer}
+.app{height:100vh;display:flex;gap:18px;padding:14px 24px}
+.sidebar,.main{
+ background:var(--panel);border:1px solid #fff;
+ border-radius:27px;box-shadow:var(--shadow);min-height:0;
 }
-
-.sidebar, .main {
-  background: var(--panel);
-  border: 1px solid #ffffffb8;
-  border-radius: 27px;
-  box-shadow: var(--shadow);
-  min-height: 0;
-  backdrop-filter: blur(16px);
+.sidebar{
+ width:297px;flex-shrink:0;padding:28px 17px 15px;
+ display:flex;flex-direction:column
 }
-
-.sidebar {
-  width: 297px;
-  flex-shrink: 0;
-  padding: 28px 17px 15px;
-  display: flex;
-  flex-direction: column;
+.brand{display:flex;align-items:center;gap:13px;padding:0 9px 30px}
+.logo{
+ width:49px;height:49px;border-radius:17px;
+ background:linear-gradient(135deg,#8964ff,#ed79d8);
+ display:grid;place-items:center;font-size:25px;font-weight:900;
+ color:white;box-shadow:0 7px 20px #9b70ff30
 }
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 0 9px 30px;
+.brand-name{font-size:25px;font-weight:800;letter-spacing:-1px}
+.brand-sub{font-size:10px;color:var(--muted);margin-top:5px}
+.section-head{
+ display:flex;justify-content:space-between;align-items:center;
+ padding:0 10px 16px;color:#9991b3;font-weight:bold;
+ letter-spacing:1px;font-size:12px
 }
-
-.logo {
-  width: 49px;
-  height: 49px;
-  border-radius: 17px;
-  background: linear-gradient(135deg, #8964ff, #ed79d8);
-  display: grid;
-  place-items: center;
-  font-size: 25px;
-  font-weight: 900;
-  color: white;
-  box-shadow: 0 7px 20px #9b70ff30;
+.add-channel{
+ width:38px;height:38px;border:0;border-radius:13px;
+ color:#896aff;background:#f1edff;font-size:22px
 }
-
-.brand-name {
-  font-size: 25px;
-  font-weight: 800;
-  letter-spacing: -1px;
+.channel-list{display:flex;flex-direction:column;gap:7px}
+.channel{
+ width:100%;padding:11px 13px;border:0;border-radius:16px;
+ background:transparent;color:#89829f;display:flex;
+ align-items:center;gap:12px;text-align:left;font-size:14px
 }
-
-.brand-sub {
-  font-size: 10px;
-  color: var(--muted);
-  margin-top: 5px;
+.channel.active{background:linear-gradient(110deg,#eee5ff,#fff0fa);color:#7854ed;font-weight:bold}
+.channel-icon{
+ width:39px;height:39px;border-radius:13px;background:#eee8ff;
+ display:grid;place-items:center;color:#8c6aff;font-size:18px
 }
-
-.section-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 10px 16px;
-  color: #9991b3;
-  font-weight: bold;
-  letter-spacing: 1px;
-  font-size: 12px;
+.channel-name{flex:1}.channel-dot{width:10px;height:10px;background:#b8b2cb;border-radius:50%}
+.profile{
+ margin-top:auto;padding:17px 9px 4px;border-top:1px solid var(--border);
+ display:flex;align-items:center;gap:11px
 }
-
-.add-channel {
-  width: 38px;
-  height: 38px;
-  border: 0;
-  border-radius: 13px;
-  color: #896aff;
-  background: #f1edff;
-  font-size: 22px;
+.avatar{
+ width:43px;height:43px;border-radius:14px;display:grid;
+ place-items:center;background:linear-gradient(135deg,#63c4ff,#8968ff);
+ color:white;font-size:19px;font-weight:bold;flex-shrink:0
 }
-
-.channel-list {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
+.profile-info{min-width:0;flex:1}
+.profile-name{font-size:13px;font-weight:bold}
+.online{font-size:11px;color:var(--green);margin-top:5px}
+.profile-actions{display:flex;gap:6px;align-items:center}
+.profile-button{
+ width:40px;height:40px;border:0;border-radius:13px;
+ background:#f0ecff;color:#8867ee;font-size:17px
 }
-
-.channel {
-  width: 100%;
-  padding: 11px 13px;
-  border: 0;
-  border-radius: 16px;
-  background: transparent;
-  color: #89829f;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-align: left;
-  font-size: 14px;
+.profile-button:hover,.add-channel:hover{background:#e5dcff}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{
+ height:92px;flex-shrink:0;padding:0 24px;display:flex;
+ align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)
 }
-
-.channel.active {
-  background: linear-gradient(110deg, #eee5ff, #fff0fa);
-  color: #7854ed;
-  font-weight: bold;
+.room{display:flex;align-items:center;gap:14px}
+.room-icon{
+ width:40px;height:40px;border-radius:14px;background:#f0e7fa;
+ display:grid;place-items:center;font-size:18px
 }
-
-.channel-icon {
-  width: 39px;
-  height: 39px;
-  border-radius: 13px;
-  background: #eee8ff;
-  display: grid;
-  place-items: center;
-  color: #8c6aff;
-  font-size: 18px;
+.room-title{font-size:19px;font-weight:800}
+.room-subtitle{font-size:12px;color:var(--muted);margin-top:6px}
+.top-actions{display:flex;gap:12px;align-items:center}
+.theme-button{
+ width:46px;height:46px;border:2px solid #c9b9ff;border-radius:16px;
+ background:#faf7ff;font-size:19px
 }
-
-.channel-name { flex: 1; }
-
-.channel-dot {
-  width: 10px;
-  height: 10px;
-  background: #b8b2cb;
-  border-radius: 50%;
+.live{background:#e8fff5;color:#209e78;border-radius:24px;padding:10px 14px;font-size:12px;font-weight:bold}
+.messages{
+ flex:1;min-height:0;overflow-y:auto;padding:33px 30px;
+ display:flex;flex-direction:column;gap:17px
 }
-
-.profile {
-  margin-top: auto;
-  padding: 17px 9px 4px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 11px;
+.start-line{
+ display:flex;align-items:center;justify-content:center;gap:13px;
+ color:#aaa3c0;font-size:11px;margin:0 0 8px
 }
-
-.avatar {
-  width: 43px;
-  height: 43px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, #63c4ff, #8968ff);
-  color: white;
-  font-size: 19px;
-  font-weight: bold;
-  flex-shrink: 0;
+.start-line:before,.start-line:after{content:"";width:60px;height:1px;background:#eee7fa}
+.message-row{display:flex;align-items:flex-start;gap:12px}
+.message-row.mine{align-self:flex-end;flex-direction:row-reverse}
+.message-avatar{
+ width:38px;height:38px;border-radius:13px;display:grid;place-items:center;
+ background:linear-gradient(135deg,#62c5ff,#8670ff);
+ color:white;font-weight:bold;flex-shrink:0;font-size:14px
 }
-
-.profile-info { min-width: 0; flex: 1; }
-.profile-name { font-size: 13px; font-weight: bold; }
-.online { font-size: 11px; color: var(--green); margin-top: 5px; }
-
-.profile-actions {
-  display: flex;
-  gap: 6px;
-  align-items: center;
+.message-body{max-width:min(75%,650px);min-width:0}
+.message-meta{display:flex;gap:9px;align-items:center;margin:2px 0 8px}
+.message-author{font-size:12px;font-weight:bold}
+.message-time{font-size:10px;color:var(--muted)}
+.bubble{
+ display:inline-block;max-width:100%;overflow-wrap:anywhere;white-space:pre-wrap;
+ background:#f0edfa;border-radius:5px 16px 16px 16px;
+ padding:11px 14px;font-size:12px;line-height:1.55;color:#39314d
 }
-
-.profile-button {
-  width: 40px;
-  height: 40px;
-  border: 0;
-  border-radius: 13px;
-  background: #f0ecff;
-  color: #8867ee;
-  font-size: 17px;
+.mine .bubble{background:#e7dcff;border-radius:16px 5px 16px 16px}
+.reply-quote{
+ font-size:10px;color:#8c7ba8;background:#f6f2ff;padding:7px 9px;
+ border-left:2px solid var(--accent);margin-bottom:5px;border-radius:4px
 }
-
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  min-width: 0;
+.message-actions{display:flex;gap:6px;margin-top:5px}
+.message-actions button{
+ background:#faf8ff;color:#9285b6;border:1px solid #e9e1fa;
+ border-radius:8px;padding:5px 8px;font-size:10px
 }
-
-.topbar {
-  height: 92px;
-  flex-shrink: 0;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
+.composer-area{padding:13px 30px 20px;border-top:1px solid var(--border)}
+.reply-preview{
+ display:none;align-items:center;justify-content:space-between;
+ background:#f3efff;padding:8px 12px;border-radius:9px;
+ color:#8d82aa;font-size:11px;margin-bottom:8px;gap:10px
 }
-
-.room {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+.reply-preview.show{display:flex}
+.reply-preview span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reply-preview button{border:0;background:transparent;color:var(--text)}
+.composer{
+ min-height:72px;border:1px solid #d9cdea;border-radius:22px;
+ display:flex;align-items:center;padding:10px 11px 10px 15px;gap:10px;
+ background:#ffffffa8
 }
-
-.room-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  background: #f0e7fa;
-  display: grid;
-  place-items: center;
-  font-size: 18px;
+.composer input{
+ flex:1;min-width:0;background:transparent;border:0;outline:0;
+ color:var(--text);font-size:12px;padding:10px 0
 }
-
-.room-title { font-size: 19px; font-weight: 800; }
-.room-subtitle { font-size: 12px; color: var(--muted); margin-top: 6px; }
-
-.top-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
+.composer input::placeholder{color:#aaa3bf}
+.send{
+ width:48px;height:48px;border:0;border-radius:16px;color:white;font-size:22px;
+ background:linear-gradient(135deg,#9768ff,#d46ce5);
+ box-shadow:0 5px 14px #a57bff40
 }
-
-.theme-button {
-  width: 46px;
-  height: 46px;
-  border: 2px solid #c9b9ff;
-  border-radius: 16px;
-  background: #faf7ff;
-  font-size: 19px;
+.footer-note{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;padding:14px 6px 0}
+.modal-backdrop{
+ position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+ background:#29203b35;backdrop-filter:blur(5px);z-index:100;padding:15px
 }
-
-.live {
-  background: #e8fff5;
-  color: #209e78;
-  border-radius: 24px;
-  padding: 10px 14px;
-  font-size: 12px;
-  font-weight: bold;
+.modal-backdrop.show{display:flex}
+.modal{
+ width:100%;max-width:370px;background:#fff;border:1px solid #f0e8fb;
+ border-radius:20px;padding:24px;color:#302943;
+ box-shadow:0 24px 80px #5e43852b;animation:pop .16s ease-out
 }
-
-.messages {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 33px 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 17px;
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-top{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+.modal-icon{
+ width:39px;height:39px;display:grid;place-items:center;border-radius:13px;
+ background:#f0eaff;color:#8d68f5;font-size:18px
 }
-
-.start-line {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 13px;
-  color: #aaa3c0;
-  font-size: 11px;
-  margin: 0 0 8px;
+.modal h3{margin:0;font-size:17px}
+.modal-content{font-size:12px;line-height:1.7;color:#827994;overflow-wrap:anywhere}
+.modal-content label{display:block;margin-bottom:5px}
+.modal input{
+ display:block;width:100%;margin-top:8px;padding:12px;background:#faf8ff;
+ color:#302943;border:1px solid #e8e0f4;border-radius:10px;outline-color:#a17aff
 }
-
-.start-line:before, .start-line:after {
-  content: "";
-  width: 60px;
-  height: 1px;
-  background: #eee7fa;
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:21px}
+.modal-actions button{border:0;border-radius:10px;padding:10px 15px;font-size:12px}
+.primary{background:linear-gradient(135deg,#9b73ff,#c578e8);color:white}
+.secondary{background:#f2eefb;color:#74668e}
+.danger{background:#fff0f3;color:#d84669}
+.toast-area{
+ position:fixed;right:24px;top:22px;z-index:200;
+ display:flex;flex-direction:column;gap:9px;pointer-events:none
 }
-
-.message-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+.toast{
+ width:min(330px,calc(100vw - 32px));padding:13px 15px;
+ display:flex;align-items:flex-start;gap:10px;background:#fff;
+ border:1px solid #eee5fa;border-radius:14px;
+ box-shadow:0 12px 36px #59417b1c;color:#332b48;
+ animation:pop .18s ease-out
 }
-
-.message-row.mine {
-  align-self: flex-end;
-  flex-direction: row-reverse;
+.toast-symbol{width:27px;height:27px;border-radius:9px;background:#f0eaff;display:grid;place-items:center;flex-shrink:0}
+.toast-title{font-weight:bold;font-size:12px}
+.toast-message{font-size:11px;color:#8a819e;margin-top:4px;line-height:1.5;overflow-wrap:anywhere}
+body.dark{
+ --bg:#171525;--panel:#1e1b30;--text:#f4f0ff;--muted:#aaa1c3;
+ --border:#39324f;--soft:#302944;--shadow:0 12px 35px #0002
 }
-
-.message-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 13px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, #62c5ff, #8670ff);
-  color: white;
-  font-weight: bold;
-  flex-shrink: 0;
-  font-size: 14px;
+body.dark .sidebar,body.dark .main{background:var(--panel);border-color:var(--border)}
+body.dark .channel.active{background:#40304d;color:#f4eaff}
+body.dark .channel-icon,body.dark .room-icon,body.dark .profile-button,body.dark .add-channel{background:#39314f;color:#d2c2ff}
+body.dark .composer{background:#242137;border-color:#5b4f72}
+body.dark .composer input{color:white}
+body.dark .bubble{background:#302b46;color:#f1edff}
+body.dark .mine .bubble{background:#554078}
+body.dark .reply-quote,body.dark .message-actions button{background:#29263d;color:#c5b6ec;border-color:#49405f}
+body.dark .modal{background:#211f33;color:#f5f1ff;border-color:#413857}
+body.dark .modal-content{color:#c0b8d6}
+body.dark .modal input{background:#171625;color:white;border-color:#49415f}
+body.dark .modal .secondary{background:#39334f;color:white}
+body.dark .toast{background:#211f33;color:#f5f1ff;border-color:#413857}
+body.dark .toast-message{color:#c0b8d6}
+body.dark .theme-button{background:#302944}
+@media(max-width:700px){
+ .app{padding:6px;gap:6px}
+ .sidebar{width:155px;padding:15px 8px;border-radius:18px}
+ .brand{padding:0 2px 22px;gap:8px}
+ .logo{width:35px;height:35px;border-radius:12px;font-size:19px}
+ .brand-name{font-size:19px}.brand-sub{font-size:8px}
+ .channel{padding:9px 6px;gap:6px;font-size:12px}
+ .channel-icon{width:30px;height:30px}
+ .profile{padding:12px 0;gap:6px;flex-wrap:wrap}
+ .avatar{width:33px;height:33px;font-size:14px}
+ .profile-name{font-size:11px}
+ .profile-actions{gap:4px}
+ .profile-button{width:29px;height:32px;font-size:13px}
+ .topbar{height:72px;padding:0 12px}
+ .room-title{font-size:16px}.room-subtitle{font-size:10px}
+ .messages{padding:20px 12px}
+ .composer-area{padding:10px}
+ .composer{min-height:58px;border-radius:17px}
+ .send{width:39px;height:39px;border-radius:13px}
+ .live{padding:8px;font-size:10px}
+ .theme-button{width:36px;height:36px}
+ .toast-area{top:10px;right:10px}
 }
-
-.message-body {
-  max-width: min(75%, 650px);
-  min-width: 0;
-}
-
-.message-meta {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  margin: 2px 0 8px;
-}
-
-.message-author { font-size: 12px; font-weight: bold; }
-.message-time { font-size: 10px; color: var(--muted); }
-
-.bubble {
-  display: inline-block;
-  max-width: 100%;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-  background: #f0edfa;
-  border-radius: 5px 16px 16px 16px;
-  padding: 10px 13px;
-  font-size: 12px;
-  line-height: 1.55;
-  color: #39314d;
-}
-
-.mine .bubble {
-  background: #e7dcff;
-  border-radius: 16px 5px 16px 16px;
-}
-
-.reply-quote {
-  font-size: 10px;
-  color: #8c7ba8;
-  background: #f6f2ff;
-  padding: 7px 9px;
-  border-left: 2px solid var(--accent);
-  margin-bottom: 5px;
-  border-radius: 4px;
-  overflow-wrap: anywhere;
-}
-
-.message-actions {
-  display: flex;
-  gap: 6px;
-  margin-top: 5px;
-}
-
-.message-actions button {
-  background: #faf8ff;
-  color: #9285b6;
-  border: 1px solid #e9e1fa;
-  border-radius: 8px;
-  padding: 5px 8px;
-  font-size: 10px;
-}
-
-.composer-area {
-  padding: 13px 30px 20px;
-  border-top: 1px solid var(--border);
-}
-
-.reply-preview {
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  background: #f3efff;
-  padding: 8px 12px;
-  border-radius: 9px;
-  color: #8d82aa;
-  font-size: 11px;
-  margin-bottom: 8px;
-  gap: 10px;
-}
-
-.reply-preview.show { display: flex; }
-.reply-preview span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.reply-preview button { border: 0; background: transparent; color: var(--text); }
-
-.composer {
-  min-height: 72px;
-  border: 1px solid #d9cdea;
-  border-radius: 22px;
-  display: flex;
-  align-items: center;
-  padding: 10px 11px 10px 15px;
-  gap: 10px;
-  background: #ffffffa8;
-}
-
-.composer input {
-  flex: 1;
-  min-width: 0;
-  background: transparent;
-  border: 0;
-  outline: 0;
-  color: var(--text);
-  font-size: 12px;
-  padding: 10px 0;
-}
-
-.composer input::placeholder { color: #aaa3bf; }
-
-.send {
-  width: 48px;
-  height: 48px;
-  border: 0;
-  border-radius: 16px;
-  color: white;
-  font-size: 22px;
-  background: linear-gradient(135deg, #9768ff, #d46ce5);
-  box-shadow: 0 5px 14px #a57bff40;
-}
-
-.footer-note {
-  display: flex;
-  justify-content: space-between;
-  color: var(--muted);
-  font-size: 10px;
-  padding: 14px 6px 0;
-}
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: #29203b35;
-  backdrop-filter: blur(5px);
-  z-index: 100;
-  padding: 15px;
-}
-
-.modal-backdrop.show { display: flex; }
-
-.modal {
-  width: 100%;
-  max-width: 370px;
-  background: #fff;
-  border: 1px solid #f0e8fb;
-  border-radius: 20px;
-  padding: 24px;
-  color: #302943;
-  box-shadow: 0 24px 80px #5e43852b;
-  animation: pop .16s ease-out;
-}
-
-@keyframes pop {
-  from { opacity: 0; transform: translateY(8px) scale(.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.modal-top { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
-.modal-icon { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px; background: #f0eaff; color: #8d68f5; font-size: 18px; }
-.modal h3 { margin: 0; font-size: 17px; }
-.modal-content { font-size: 12px; line-height: 1.7; color: #827994; overflow-wrap: anywhere; }
-.modal-content label { display: block; margin-bottom: 5px; }
-
-.modal input {
-  display: block;
-  width: 100%;
-  margin-top: 8px;
-  padding: 12px;
-  background: #faf8ff;
-  color: #302943;
-  border: 1px solid #e8e0f4;
-  border-radius: 10px;
-  outline-color: #a17aff;
-}
-
-.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 21px; }
-.modal-actions button { border: 0; border-radius: 10px; padding: 10px 15px; font-size: 12px; }
-.primary { background: linear-gradient(135deg, #9b73ff, #c578e8); color: white; }
-.secondary { background: #f2eefb; color: #74668e; }
-.danger { background: #fff0f3; color: #d84669; }
-
-.toast-area {
-  position: fixed;
-  right: 24px;
-  top: 22px;
-  z-index: 200;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  pointer-events: none;
-}
-
-.toast {
-  width: min(330px, calc(100vw - 32px));
-  padding: 13px 15px;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  background: #fff;
-  border: 1px solid #eee5fa;
-  border-radius: 14px;
-  box-shadow: 0 12px 36px #59417b1c;
-  color: #332b48;
-  animation: pop .18s ease-out;
-}
-
-.toast-symbol {
-  width: 27px;
-  height: 27px;
-  border-radius: 9px;
-  background: #f0eaff;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-
-.toast-title { font-weight: bold; font-size: 12px; }
-.toast-message { font-size: 11px; color: #8a819e; margin-top: 4px; line-height: 1.5; overflow-wrap: anywhere; }
 </style>
 </head>
-<style>
-/* 다크 모드 */
-body.dark {
-  background: linear-gradient(135deg, #111126, #211735, #171c35);
-  color: #f3f0ff;
-}
-
-.dark .app {
-  background: rgba(25, 24, 48, 0.88);
-  border-color: rgba(255,255,255,0.09);
-}
-
-.dark .sidebar,
-.dark .main {
-  background: rgba(28, 27, 53, 0.85);
-}
-
-.dark .sidebar {
-  border-right-color: rgba(255,255,255,0.08);
-}
-
-.dark .profile,
-.dark .channel,
-.dark .message-input,
-.dark .modal,
-.dark .channel-create-input {
-  background: #292743;
-  color: #f3f0ff;
-  border-color: rgba(255,255,255,0.1);
-}
-
-.dark .channel.active {
-  background: linear-gradient(135deg, #6548a8, #4e4b9b);
-  color: white;
-}
-
-.dark .channel:hover {
-  background: #363152;
-}
-
-.dark .room-title,
-.dark .profile-name,
-.dark .message-author,
-.dark .modal-title {
-  color: #f5f0ff;
-}
-
-.dark .muted,
-.dark .message-time,
-.dark .empty-state {
-  color: #aaa5c7;
-}
-
-.dark .message-bubble {
-  background: #302d4c;
-  color: #f6f2ff;
-}
-
-.dark .message.own .message-bubble {
-  background: linear-gradient(135deg, #7456c8, #5d60c9);
-  color: white;
-}
-
-.dark .reply-quote {
-  background: rgba(255,255,255,0.07);
-  border-left-color: #a88aff;
-}
-
-.dark .composer {
-  border-top-color: rgba(255,255,255,0.1);
-}
-
-.dark .message-input::placeholder,
-.dark input::placeholder {
-  color: #9994b6;
-}
-
-.dark .modal-backdrop {
-  background: rgba(5, 4, 18, 0.78);
-}
-
-.dark .modal {
-  box-shadow: 0 24px 80px rgba(0,0,0,0.4);
-}
-
-.dark .icon-button {
-  background: #302d4c;
-  color: #e7ddff;
-}
-
-.dark .icon-button:hover {
-  background: #40385f;
-}
-
-.dark .send-button {
-  background: linear-gradient(135deg, #9270e7, #6b71e8);
-}
-
-.dark .reply-preview {
-  background: #302d4c;
-  border-color: rgba(255,255,255,0.1);
-}
-
-.dark .toast {
-  background: #302d4c;
-  color: #f5f0ff;
-  border-color: rgba(255,255,255,0.1);
-}
-
-/* 스크롤바 */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #b7a8dc transparent;
-}
-
-.dark * {
-  scrollbar-color: #62568a transparent;
-}
-
-/* 모바일 대응 */
-@media (max-width: 760px) {
-  body {
-    padding: 0;
-  }
-
-  .app {
-    width: 100%;
-    height: 100dvh;
-    min-height: 0;
-    border-radius: 0;
-    grid-template-columns: 76px minmax(0, 1fr);
-  }
-
-  .sidebar {
-    padding: 12px 8px;
-    gap: 12px;
-  }
-
-  .sidebar-heading,
-  .channel-name,
-  .channel-description,
-  .profile-details,
-  .sidebar-footer-text {
-    display: none;
-  }
-
-  .profile {
-    justify-content: center;
-    padding: 8px 4px;
-  }
-
-  .profile-actions {
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .channel-list {
-    align-items: center;
-  }
-
-  .channel {
-    width: 48px;
-    min-height: 48px;
-    padding: 8px;
-    justify-content: center;
-  }
-
-  .channel-icon {
-    margin: 0;
-  }
-
-  .main {
-    min-width: 0;
-  }
-
-  .chat-header {
-    padding: 14px;
-  }
-
-  .messages {
-    padding: 14px 10px;
-  }
-
-  .composer {
-    padding: 10px;
-  }
-
-  .message {
-    max-width: 92%;
-  }
-
-  .room-title {
-    font-size: 17px;
-  }
-
-  .chat-subtitle {
-    font-size: 11px;
-  }
-}
-
-@media (max-width: 420px) {
-  .app {
-    grid-template-columns: 60px minmax(0, 1fr);
-  }
-
-  .sidebar {
-    padding: 8px 5px;
-  }
-
-  .channel {
-    width: 42px;
-    min-height: 42px;
-  }
-
-  .chat-header {
-    padding: 12px 10px;
-  }
-
-  .messages {
-    padding: 10px 7px;
-  }
-
-  .composer {
-    padding: 8px;
-  }
-
-  .message-input {
-    font-size: 14px;
-  }
-}
-</style>
-
 <body>
 <div class="app">
-
-  <!-- 왼쪽 사이드바 -->
-  <aside class="sidebar">
-
-    <div class="brand">
-      <div class="brand-logo">A</div>
-      <div class="brand-text">Axion</div>
-    </div>
-
-    <div class="profile">
-      <div class="avatar" id="profileAvatar">A</div>
-
-      <div class="profile-details">
-        <div class="profile-name" id="profileName">사용자</div>
-        <div class="profile-status">온라인</div>
-      </div>
-
-      <div class="profile-actions">
-        <button class="icon-button" id="profileEdit"
-          type="button" title="프로필 수정">✎</button>
-        <button class="icon-button" id="adminButton"
-          type="button" title="관리자 메뉴">⚙</button>
-      </div>
-    </div>
-
-    <div class="sidebar-heading">
-      <span>채널</span>
-      <button class="icon-button" id="addChannel"
-        type="button" title="채널 추가">＋</button>
-    </div>
-
-    <div class="channel-list" id="channelList">
-      <div class="empty-state">채널을 불러오는 중...</div>
-    </div>
-
-    <div class="sidebar-footer">
-      <button class="theme-button" id="themeButton" type="button">
-        <span id="themeIcon">☾</span>
-        <span class="sidebar-footer-text" id="themeLabel">다크 모드</span>
-      </button>
-    </div>
-
-  </aside>
-
-  <!-- 채팅 메인 화면 -->
-  <main class="main">
-
-    <header class="chat-header">
-      <div class="room-heading">
-        <div class="room-icon" id="roomIcon">#</div>
-        <div>
-          <h1 class="room-title" id="roomTitle">채널</h1>
-          <div class="chat-subtitle" id="status">연결 중...</div>
-        </div>
-      </div>
-
-      <div class="header-actions">
-        <span class="connection-indicator" id="connectionIndicator"></span>
-      </div>
-    </header>
-
-    <section class="messages" id="messages">
-      <div class="empty-state">
-        <div class="empty-icon">✦</div>
-        <h3>Axion에 오신 것을 환영합니다</h3>
-        <p>메시지를 보내 대화를 시작해 보세요.</p>
-      </div>
-    </section>
-
-    <!-- 답장 미리보기 -->
-    <div class="reply-preview" id="replyPreview" hidden>
-      <div class="reply-preview-content">
-        <div class="reply-preview-label">답장 중</div>
-        <div id="replyText"></div>
-      </div>
-      <button class="icon-button" id="cancelReply"
-        type="button" title="답장 취소">×</button>
-    </div>
-
-    <!-- 메시지 입력 -->
-    <form class="composer" id="messageForm">
-      <input
-        class="message-input"
-        id="messageInput"
-        type="text"
-        placeholder="메시지를 입력하세요..."
-        maxlength="2000"
-        autocomplete="off"
-        required
-      >
-      <button class="send-button" id="sendButton"
-        type="submit" title="메시지 보내기">➤</button>
-    </form>
-
-  </main>
+ <aside class="sidebar">
+  <div class="brand">
+   <div class="logo">A</div>
+   <div><div class="brand-name">Axion</div><div class="brand-sub">YOUR SPACE, YOUR PEOPLE</div></div>
+  </div>
+  <div class="section-head"><span>CHANNELS</span><button class="add-channel" id="addChannel">+</button></div>
+  <div class="channel-list" id="channelList"></div>
+  <div class="profile">
+   <div class="avatar" id="profileAvatar">김</div>
+   <div class="profile-info"><div class="profile-name" id="profileName">사용자</div><div class="online">● 온라인</div></div>
+   <div class="profile-actions">
+    <button class="profile-button" id="profileEdit" title="프로필 수정">✎</button>
+    <button class="profile-button" id="adminButton" title="관리자">⚙</button>
+   </div>
+  </div>
+ </aside>
+ <main class="main">
+  <header class="topbar">
+   <div class="room">
+    <div class="room-icon">✦</div>
+    <div><div class="room-title" id="roomTitle">잡담</div><div class="room-subtitle">편하게 이야기를 나눠 보세요.</div></div>
+   </div>
+   <div class="top-actions">
+    <button class="theme-button" id="themeButton" title="테마 변경">🌙</button>
+    <span class="live">● 실시간</span>
+   </div>
+  </header>
+  <section class="messages" id="messages"><div class="start-line">대화 시작</div></section>
+  <div class="composer-area">
+   <div class="reply-preview" id="replyPreview"><span id="replyText"></span><button id="cancelReply">✕</button></div>
+   <form class="composer" id="messageForm">
+    <input id="messageInput" placeholder="메시지를 입력하세요... (@로 멘션)" maxlength="2000" autocomplete="off">
+    <button class="send" type="submit" title="전송">➤</button>
+   </form>
+   <div class="footer-note"><span id="status">Enter 전송 · Shift + Enter 줄바꿈</span><span>Axion Chat</span></div>
+  </div>
+ </main>
 </div>
 
-<!-- 커스텀 모달 -->
-<div class="modal-backdrop" id="modalBackdrop" hidden>
-  <section class="modal" role
+<div class="modal-backdrop" id="modalBackdrop">
+ <div class="modal">
+  <div class="modal-top"><div class="modal-icon" id="modalIcon">✦</div><h3 id="modalTitle">Axion</h3></div>
+  <div class="modal-content" id="modalContent"></div>
+  <div class="modal-actions" id="modalActions"></div>
+ </div>
+</div>
+<div class="toast-area" id="toastArea"></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {getDatabase,ref,push,set,onValue,remove} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyAf-nM5PJRUo2q7TvX2LeZNKxh8A021bck",
+ authDomain:"chat-27c50.firebaseapp.com",
+ databaseURL:"https://chat-27c50-default-rtdb.firebaseio.com",
+ projectId:"chat-27c50",
+ storageBucket:"chat-27c50.firebasestorage.app",
+ messagingSenderId:"811770063187",
+ appId:"1:811770063187:web:ba17f4f49ebb682c9cd9a6"
+};
+const ADMIN_PASSWORD="KB0328";
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+const $=id=>document.getElementById(id);
+
+let currentChannel="general";
+let channels={general:{name:"잡담"}};
+let allMessages={};
+let replyTo=null;
+let isAdmin=false;
+let unsubscribeMessages=null;
+
+let username=localStorage.getItem("axionName");
+if(!username){
+ username=prompt("Axion에서 사용할 이름을 입력하세요.")||"사용자";
+ username=username.trim().slice(0,30)||"사용자";
+ localStorage.setItem("axionName",username);
+}
+updateProfile();
+
+function escapeHTML(s=""){
+ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function updateProfile(){
+ $("profileName").textContent=username;
+ $("profileAvatar").textContent=username.charAt(0).toUpperCase();
+}
+function toast(title,message="",type="info"){
+ const item=document.createElement("div");
+ item.className="toast";
+ const symbols={info:"✦",success:"✓",error:"!",warning:"⚠"};
+ const icon=symbols[type]||"✦";
+ item.innerHTML=`<div class="toast-symbol">${icon}</div><div><div class="toast-title">${escapeHTML(title)}</div><div class="toast-message">${escapeHTML(message)}</div></div>`;
+ $("toastArea").appendChild(item);
+ setTimeout(()=>item.remove(),4000);
+}
+function openModal(title,content,buttons=[],icon="✦"){
+ $("modalTitle").textContent=title;
+ $("modalIcon").textContent=icon;
+ $("modalContent").innerHTML=content;
+ $("modalActions").innerHTML="";
+ buttons.forEach(b=>{
+  const el=document.createElement("button");
+  el.className=b.className||"secondary";
+  el.textContent=b.label;
+  el.onclick=async()=>{
+   if(b.action){
+    try{
+     const result=await b.action();
+     if(result===false)return;
+    }catch(e){toast("작업 실패",e.message||"오류가 발생했습니다.","error");return}
+   }
+   if(b.close!==false)closeModal();
+  };
+  $("modalActions").appendChild(el);
+ });
+ $("modalBackdrop").classList.add("show");
+}
+function closeModal(){$("modalBackdrop").classList.remove("show")}
+$("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop"))closeModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+
+function renderChannels(){
+ $("channelList").innerHTML="";
+ Object.entries(channels).forEach(([id,c])=>{
+  const button=document.createElement("button");
+  button.className="channel"+(id===currentChannel?" active":"");
+  button.innerHTML=`<span class="channel-icon">✦</span><span class="channel-name">${escapeHTML(c.name||id)}</span>${id===currentChannel?'<span class="channel-dot"></span>':""}`;
+  button.onclick=()=>switchChannel(id);
+  $("channelList").appendChild(button);
+ });
+}
+function listenChannels(){
+ onValue(ref(db,"channels"),snap=>{
+  channels={general:{name:"잡담"},...(snap.val()||{})};
+  renderChannels();
+ },err=>toast("채널 연결 실패",err.message,"error"));
+}
+function switchChannel(id){
+ currentChannel=id;
+ $("roomTitle").textContent=channels[id]?.name||id;
+ replyTo=null;updateReplyPreview();renderChannels();
+ if(unsubscribeMessages)unsubscribeMessages();
+ $("messages").innerHTML='<div class="start-line">대화 시작</div>';
+ unsubscribeMessages=onValue(ref(db,"channelMessages/"+id),snap=>{
+  allMessages=snap.val()||{};
+  renderMessages();
+  $("status").textContent="실시간 연결됨";
+ },err=>{
+  $("status").textContent="연결 오류";
+  toast("메시지를 불러오지 못했어요",err.message,"error");
+ });
+}
+function renderMessages(){
+ const box=$("messages");
+ const entries=Object.entries(allMessages).sort((a,b)=>(a[1].timestamp||0)-(b[1].timestamp||0));
+ let html='<div class="start-line">대화 시작</div>';
+ if(!entries.length)html+='<div style="text-align:center;color:#aaa3bf;font-size:12px;margin-top:20px">아직 메시지가 없습니다.</div>';
+ entries.forEach(([id,m])=>{
+  const mine=m.name===username;
+  const time=m.timestamp?new Date(m.timestamp).toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",hour12:false}):"";
+  const parent=m.replyTo?allMessages[m.replyTo]:null;
+  const text=escapeHTML(m.text||"").replace(/(^|\s)(@[a-zA-Z0-9가-힣_]+)/g,'$1<span style="color:#9870ff;font-weight:bold">$2</span>');
+  html+=`<div class="message-row ${mine?"mine":""}" data-id="${escapeHTML(id)}">
+   <div class="message-avatar">${escapeHTML((m.name||"?").charAt(0))}</div>
+   <div class="message-body">
+    <div class="message-meta"><span class="message-author">${escapeHTML(m.name||"사용자")}</span><span class="message-time">${time}</span></div>
+    ${parent?`<div class="reply-quote">↳ ${escapeHTML(parent.name)}: ${escapeHTML(parent.text)}</div>`:""}
+    <div class="bubble">${text}</div>
+    <div class="message-actions"><button data-reply="${escapeHTML(id)}">↩ 답장</button>${isAdmin?`<button data-delete="${escapeHTML(id)}">삭제</button>`:""}</div>
+   </div>
+  </div>`;
+ });
+ box.innerHTML=html;
+ box.querySelectorAll("[data-reply]").forEach(b=>b.onclick=()=>startReply(b.dataset.reply));
+ box.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>confirmDeleteMessage(b.dataset.delete));
+ box.querySelectorAll(".message-row").forEach(row=>{
+  let x=0,y=0;
+  row.addEventListener("touchstart",e=>{x=e.touches[0].clientX;y=e.touches[0].clientY},{passive:true});
+  row.addEventListener("touchend",e=>{
+   const dx=e.changedTouches[0].clientX-x,dy=e.changedTouches[0].clientY-y;
+   if(dx>65&&Math.abs(dy)<45)startReply(row.dataset.id);
+  },{passive:true});
+ });
+ box.scrollTop=box.scrollHeight;
+}
+function startReply(id){
+ const m=allMessages[id];if(!m)return;
+ replyTo=id;
+ $("replyText").textContent="답장: "+m.name+" — "+m.text;
+ updateReplyPreview();$("messageInput").focus();
+}
+function updateReplyPreview(){$("replyPreview").classList.toggle("show",!!replyTo)}
+$("cancelReply").onclick=()=>{replyTo=null;updateReplyPreview()};
+
+$("messageForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const input=$("messageInput"),text=input.value.trim();
+ if(!text)return;
+ const message={name:username,text,timestamp:Date.now()};
+ if(replyTo)message.replyTo=replyTo;
+ $("status").textContent="전송 중...";
+ try{
+  await set(push(ref(db,"channelMessages/"+currentChannel)),message);
+  input.value="";replyTo=null;updateReplyPreview();
+  $("status").textContent="Enter 전송 · Shift + Enter 줄바꿈";
+ }catch(err){
+  toast("메시지 전송 실패",err.message,"error");
+  openModal("메시지를 보내지 못했어요",`<p>${escapeHTML(err.message)}</p><p>Firebase 데이터베이스 규칙을 확인해 주세요.</p>`,[{label:"확인",className:"primary"}],"!");
+ }
+});
+$("messageInput").addEventListener("keydown",e=>{
+ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("messageForm").requestSubmit()}
+});
+
+$("addChannel").onclick=()=>openModal("새 채널 만들기",
+ '<label for="newChannelName">채널 이름</label><input id="newChannelName" maxlength="30" placeholder="예: 게임">',
+ [{label:"취소"},
+ {label:"만들기",className:"primary",action:async()=>{
+  const name=$("newChannelName").value.trim();
+  if(!name){toast("채널 이름을 입력해 주세요.","","warning");return false}
+  const id=name.toLowerCase().replace(/\s+/g,"-").replace(/[.#$/\[\]]/g,"");
+  if(!id){toast("사용할 수 없는 채널 이름이에요.","","warning");return false}
+  await set(ref(db,"channels/"+id),{name});
+  channels[id]={name};switchChannel(id);
+  toast("채널을 만들었어요","# "+name,"success");
+ }}],"＋");
+
+$("profileEdit").onclick=()=>openModal("프로필 수정",
+ `<label for="newUsername">채팅에 표시할 이름</label><input id="newUsername" maxlength="30" value="${escapeHTML(username)}">`,
+ [{label:"취소"},
+ {label:"저장",className:"primary",action:()=>{
+  const value=$("newUsername").value.trim();
+  if(!value){toast("이름을 입력해 주세요.","","warning");return false}
+  username=value;localStorage.setItem("axionName",username);
+  updateProfile();renderMessages();
+  toast("프로필을 수정했어요",username,"success");
+ }}],"✎");
+
+$("adminButton").onclick=()=>{
+ if(isAdmin){
+  openModal("관리자 로그아웃","관리자 모드를 종료할까요?",[
+   {label:"취소"},
+   {label:"로그아웃",className:"primary",action:()=>{
+    isAdmin=false;$("adminButton").textContent="⚙";renderMessages();
+    toast("관리자 모드가 종료됐어요","","success");
+   }}
+  ],"⚙");
+  return;
+ }
+ openModal("관리자 로그인",
+  '<label for="adminPassword">관리자 비밀번호</label><input id="adminPassword" type="password" placeholder="비밀번호 입력" autocomplete="current-password">',
+  [{label:"취소"},
+   {label:"로그인",className:"primary",action:()=>{
+    if($("adminPassword").value!==ADMIN_PASSWORD){
+     toast("로그인 실패","비밀번호가 올바르지 않습니다.","error");
+     $("adminPassword").value="";return false;
+    }
+    isAdmin=true;$("adminButton").textContent="✓";renderMessages();
+    toast("관리자 모드 활성화","메시지 삭제 기능을 사용할 수 있어요.","success");
+   }}],"⚙");
+};
+
+function confirmDeleteMessage(id){
+ if(!isAdmin){toast("관리자 권한이 필요해요","","warning");return}
+ const m=allMessages[id];if(!m)return;
+ openModal("메시지를 삭제할까요?",
+  `<p><b>${escapeHTML(m.name||"사용자")}</b>의 메시지를 삭제합니다.</p><p>삭제한 메시지는 복구할 수 없어요.</p>`,
+  [{label:"취소"},
+   {label:"삭제하기",className:"danger",action:async()=>{
+    await remove(ref(db,"channelMessages/"+currentChannel+"/"+id));
+    toast("메시지를 삭제했어요","","success");
+   }}],"!");
+}
+$("themeButton").onclick=()=>{
+ document.body.classList.toggle("dark");
+ const dark=document.body.classList.contains("dark");
+ $("themeButton").textContent=dark?"☀️":"🌙";
+ localStorage.setItem("axionTheme",dark?"dark":"light");
+ toast("테마 변경",dark?"다크 모드":"라이트 모드","success");
+};
+if(localStorage.getItem("axionTheme")==="dark"){
+ document.body.classList.add("dark");$("themeButton").textContent="☀️";
+}
+listenChannels();
+switchChannel("general");
+</script>
+</body>
+</html>
