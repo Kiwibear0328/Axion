@@ -1,403 +1,540 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Axion Chat</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Axion</title>
 
 <style>
 :root {
   color-scheme: dark;
-  --bg: #08090c;
-  --panel: rgba(20, 22, 28, .92);
-  --card: #171920;
-  --text: #f4f5f7;
-  --muted: #9296a3;
-  --border: #292c36;
-  --blue: #4387ff;
-  --mine: #1c3154;
+  --bg: #0b1020;
+  --panel: #111a2b;
+  --panel2: #19263b;
+  --line: #293952;
+  --text: #edf3ff;
+  --muted: #93a5c0;
+  --blue: #3978f6;
 }
-body.light {
-  color-scheme: light;
-  --bg: #f3f5f9;
-  --panel: rgba(255,255,255,.94);
-  --card: #f0f2f7;
-  --text: #171923;
-  --muted: #747986;
-  --border: #dfe3eb;
-  --mine: #dce9ff;
-}
+
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   height: 100dvh;
   overflow: hidden;
-  font-family: Pretendard, sans-serif;
   background: var(--bg);
   color: var(--text);
-  transition: background .2s, color .2s;
+  font-family: system-ui, -apple-system, "Malgun Gothic", sans-serif;
 }
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 38px 38px;
-  opacity: .17;
-}
-#particles {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: .45;
-}
+
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+
 .app {
-  position: relative;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-  width: min(900px, 100%);
-  height: 100dvh;
-  margin: auto;
-  background: var(--panel);
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  backdrop-filter: blur(16px);
 }
-header {
-  min-height: 70px;
+
+.topbar {
+  height: 68px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 22px;
-  border-bottom: 1px solid var(--border);
+  gap: 13px;
+  padding: 0 16px;
+  background: #0f1728;
+  border-bottom: 1px solid var(--line);
+  z-index: 5;
 }
-.brand { font-size: 22px; font-weight: 800; letter-spacing: -.8px; }
-.brand span { color: var(--blue); }
-.header-right { display: flex; align-items: center; gap: 10px; }
-.status { color: var(--muted); font-size: 12px; }
-.icon-btn {
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--text);
-  border-radius: 10px;
-  padding: 9px 12px;
-  cursor: pointer;
-}
-#messages {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 20px;
-  scroll-behavior: smooth;
-}
-.empty {
-  color: var(--muted);
-  text-align: center;
-  margin-top: 25vh;
-  font-size: 14px;
-}
-.message {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 19px;
-  align-items: flex-start;
-}
-.message.mine { flex-direction: row-reverse; }
-.avatar {
-  width: 34px;
-  height: 34px;
+
+.menu-button {
+  width: 43px;
+  height: 43px;
   flex-shrink: 0;
   display: grid;
   place-items: center;
+  background: #19263b;
+  color: white;
+  border: 1px solid var(--line);
   border-radius: 11px;
-  background: #263e67;
-  color: #a9caff;
-  font-weight: 800;
+  font-size: 25px;
 }
-.message.mine .avatar { background: #194b96; color: white; }
-.message-content { min-width: 0; max-width: 78%; }
-.message.mine .message-content { text-align: right; }
-.meta {
+
+.menu-button:hover { background: #293b58; }
+
+.brand {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-  font-size: 12px;
-}
-.message.mine .meta { justify-content: flex-end; }
-.author { font-weight: 700; }
-.time { color: var(--muted); font-size: 11px; }
-.bubble {
-  display: inline-block;
-  max-width: 100%;
-  padding: 11px 13px;
-  border: 1px solid var(--border);
-  border-radius: 4px 14px 14px 14px;
-  background: var(--card);
-  text-align: left;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-  line-height: 1.55;
-}
-.message.mine .bubble {
-  background: var(--mine);
-  border-color: #31588f;
-  border-radius: 14px 4px 14px 14px;
-}
-.mention { color: #63a0ff; font-weight: 700; }
-.reply-quote {
-  display: block;
-  width: 100%;
-  margin-bottom: 7px;
-  padding: 8px 10px;
-  border: 0;
-  border-left: 3px solid var(--blue);
-  border-radius: 5px;
-  background: rgba(120,130,150,.12);
-  color: var(--muted);
-  text-align: left;
-  cursor: pointer;
-  font: inherit;
-  font-size: 12px;
-  overflow: hidden;
-}
-.reply-quote strong { display: block; color: var(--blue); margin-bottom: 3px; }
-.reply-quote span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.message-actions {
-  display: flex;
-  margin-top: 5px;
-  gap: 5px;
-  opacity: .8;
-}
-.message.mine .message-actions { justify-content: flex-end; }
-.reply-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  min-height: 32px;
-  padding: 6px 10px;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: var(--panel);
-  color: var(--muted);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 12px;
-  touch-action: manipulation;
-}
-.reply-btn:hover, .reply-btn:focus-visible {
-  color: var(--blue);
-  border-color: var(--blue);
-}
-.composer {
-  position: relative;
-  padding: 12px 16px max(14px, env(safe-area-inset-bottom));
-  border-top: 1px solid var(--border);
-  background: var(--panel);
-}
-.reply-preview {
-  display: none;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
-  padding: 10px 12px;
-  background: var(--card);
-  border-left: 3px solid var(--blue);
-  border-radius: 8px;
-}
-.reply-preview.show { display: flex; }
-.reply-preview-text { flex: 1; min-width: 0; }
-.reply-preview strong { display: block; color: var(--blue); font-size: 12px; margin-bottom: 4px; }
-.reply-preview p {
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--muted);
-  font-size: 13px;
-}
-.cancel-reply {
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font-size: 22px;
-  cursor: pointer;
-  padding: 4px 8px;
-}
-.input-row { display: flex; align-items: flex-end; gap: 10px; }
-#message {
   flex: 1;
   min-width: 0;
-  resize: none;
-  max-height: 120px;
-  border: 1px solid var(--border);
-  outline: none;
+}
+
+.brand-icon {
+  width: 36px;
+  height: 36px;
   border-radius: 12px;
-  padding: 13px 14px;
-  background: var(--card);
-  color: var(--text);
-  font: inherit;
-  font-size: 15px;
+  background: linear-gradient(135deg, #4388ff, #7048ed);
+  display: grid;
+  place-items: center;
+  font-weight: 900;
 }
-#message:focus { border-color: var(--blue); }
-#send {
-  border: 0;
-  border-radius: 12px;
-  padding: 0 18px;
-  height: 46px;
-  background: var(--blue);
-  color: white;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
+
+.brand h1 { margin: 0; font-size: 19px; }
+.brand p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
+
+.status { color: #64e2b0; font-size: 11px; white-space: nowrap; }
+
+.layout {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  position: relative;
 }
-#send:disabled { opacity: .5; cursor: wait; }
-#mention-list {
-  display: none;
-  position: absolute;
-  bottom: calc(100% - 4px);
-  left: 16px;
-  width: min(300px, calc(100% - 32px));
-  max-height: 180px;
-  overflow-y: auto;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--panel);
-  box-shadow: 0 10px 35px #0004;
-  z-index: 5;
+
+.sidebar {
+  width: 265px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: #0e1727;
+  border-right: 1px solid var(--line);
+  min-height: 0;
 }
-.mention-option {
-  padding: 11px 13px;
-  cursor: pointer;
-  font-size: 14px;
-}
-.mention-option:hover { background: var(--card); color: var(--blue); }
-#notice { color: var(--muted); font-size: 12px; padding: 0 2px 8px; }
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
+
+.sidebar-head {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: #0009;
-  backdrop-filter: blur(8px);
+  justify-content: space-between;
+  padding: 18px 14px 12px;
 }
-.modal-card {
-  width: min(360px, 100%);
-  padding: 25px;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: var(--panel);
+
+.sidebar-head h2 {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 1px;
 }
-.modal-card h2 { margin: 0 0 8px; }
-.modal-card p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
-#nickname {
+
+.add-button {
+  width: 35px;
+  height: 35px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: #19263b;
+  color: white;
+  font-size: 24px;
+}
+
+.category-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 9px 12px;
+}
+
+.category-item {
   width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px;
+  margin: 3px 0;
+  border: 0;
   border-radius: 10px;
-  background: var(--card);
-  color: var(--text);
-  font: inherit;
+  background: transparent;
+  color: #b9c7dc;
+  text-align: left;
 }
-#join {
-  width: 100%;
-  margin-top: 12px;
+
+.category-item:hover { background: #19263b; }
+
+.category-item.active {
+  background: #20365b;
+  color: white;
+  box-shadow: inset 3px 0 #5790ff;
+}
+
+.category-hash {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: #1d2b43;
+  color: #8db5ff;
+  border-radius: 8px;
+}
+
+.category-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+
+.sidebar-bottom {
+  padding: 13px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.chat {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.room-head {
+  height: 68px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.room-hash { font-size: 28px; color: #7ea9ff; }
+.room-title { margin: 0; font-size: 16px; }
+.room-subtitle { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+
+.messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.system {
+  align-self: center;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
   padding: 12px;
+}
+
+.msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+}
+
+.avatar {
+  width: 37px;
+  height: 37px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  flex-shrink: 0;
+  color: white;
+  font-weight: 800;
+}
+
+.msg-content { min-width: 0; max-width: calc(100% - 48px); }
+
+.meta {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin: 1px 0 6px;
+  font-size: 12px;
+}
+
+.name { font-weight: 750; }
+.time { color: #7f91ad; font-size: 11px; }
+
+.bubble {
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #dce6f6;
+}
+
+.mention-highlight {
+  background: #254b86;
+  color: #a9d0ff;
+  border-radius: 4px;
+  padding: 1px 3px;
+}
+
+.composer-wrap {
+  padding: 12px 20px 17px;
+  border-top: 1px solid var(--line);
+  background: #0f1728;
+}
+
+.composer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px;
+  background: #19263b;
+  border: 1px solid #35445c;
+  border-radius: 13px;
+}
+
+.composer:focus-within { border-color: #5689ff; }
+
+.composer input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px;
+  color: white;
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.composer input::placeholder { color: #7184a1; }
+
+.send-button, .primary {
+  padding: 11px 16px;
   border: 0;
   border-radius: 10px;
   background: var(--blue);
   color: white;
-  font: inherit;
-  font-weight: 700;
+  font-weight: 750;
+}
+
+.send-button:hover, .primary:hover { background: #255bd0; }
+
+.mention-list {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  background: #19263b;
+  border: 1px solid #354762;
+  border-radius: 12px;
+  padding: 5px;
+  z-index: 4;
+}
+
+.composer { position: relative; }
+
+.mention-option {
+  padding: 9px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 13px;
 }
-.flash { animation: flash 1.5s ease; }
-@keyframes flash {
-  0%,100% { outline: 0 solid transparent; }
-  20%,70% { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+.mention-option:hover { background: #293b58; }
+
+.join {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #070b13ed;
 }
-@media (hover:hover) and (pointer:fine) {
-  .message-actions { opacity: 0; transition: opacity .15s; }
-  .message:hover .message-actions,
-  .message:focus-within .message-actions { opacity: 1; }
+
+.joinbox {
+  width: min(400px, 100%);
+  padding: 27px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
 }
-@media (max-width: 600px) {
-  header { min-height: 60px; padding: 0 14px; }
-  .brand { font-size: 20px; }
-  #messages { padding: 16px 12px; }
-  .message-content { max-width: 84%; }
-  .avatar { width: 30px; height: 30px; border-radius: 9px; }
-  .composer { padding: 10px 10px max(10px, env(safe-area-inset-bottom)); }
-  .message-actions { opacity: 1; }
-  .reply-btn { min-height: 36px; padding: 7px 11px; }
-  #send { padding: 0 14px; }
-  #message { font-size: 16px; }
-  .status { display: none; }
+
+.joinbox h2 { margin: 0; font-size: 23px; }
+.joinbox p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+.joinbox input, .modal input {
+  width: 100%;
+  padding: 13px;
+  margin: 5px 0 12px;
+  border: 1px solid #35445c;
+  border-radius: 10px;
+  background: #0e1727;
+  color: white;
+  outline: none;
+}
+
+.joinbox input:focus, .modal input:focus { border-color: #5689ff; }
+.joinbox .primary { width: 100%; padding: 13px; }
+.small { color: var(--muted); font-size: 11px; line-height: 1.5; margin-top: 13px; }
+.err { color: #ff9292; font-size: 12px; line-height: 1.5; margin-top: 8px; }
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  display: none;
+  place-items: center;
+  padding: 20px;
+  background: #050914c9;
+}
+
+.modal {
+  width: min(390px, 100%);
+  padding: 23px;
+  background: #141f32;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.modal h3 { margin: 0 0 9px; }
+.modal p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.secondary {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #202d42;
+  color: white;
+}
+
+.toast {
+  display: none;
+  position: fixed;
+  z-index: 30;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100% - 30px);
+  padding: 11px 15px;
+  background: #26364e;
+  border: 1px solid #415674;
+  border-radius: 10px;
+  color: white;
+  font-size: 12px;
+}
+
+.layout.sidebar-closed .sidebar { display: none; }
+
+@media(max-width:650px) {
+  .topbar { height: 60px; padding: 0 10px; gap: 9px; }
+  .brand h1 { font-size: 16px; }
+  .brand p { display: none; }
+  .status { font-size: 10px; }
+  .sidebar {
+    position: absolute;
+    z-index: 6;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(285px, 85vw);
+    box-shadow: 18px 0 40px #0005;
+  }
+  .layout.sidebar-closed .sidebar { display: none; }
+  .room-head { height: 60px; padding: 0 14px; }
+  .messages { padding: 16px 12px; }
+  .composer-wrap { padding: 10px; }
+  .send-button { padding: 10px 12px; }
 }
 </style>
 </head>
 
 <body>
-<canvas id="particles"></canvas>
-
 <div class="app">
-  <header>
-    <div class="brand">Axi<span>on</span></div>
-    <div class="header-right">
-      <span class="status" id="status">연결 중...</span>
-      <button class="icon-btn" id="theme-toggle" type="button" aria-label="테마 변경">☀/☾</button>
+  <header class="topbar">
+    <button id="toggle-sidebar" class="menu-button" type="button"
+      aria-label="카테고리 메뉴 열기" title="카테고리 메뉴">☰</button>
+
+    <div class="brand">
+      <div class="brand-icon">A</div>
+      <div>
+        <h1>Axion</h1>
+        <p>실시간 채팅</p>
+      </div>
     </div>
+    <span class="status" id="status">연결 대기 중</span>
   </header>
 
-  <main id="messages" aria-live="polite">
-    <div class="empty" id="empty">메시지를 기다리는 중...</div>
-  </main>
-
-  <form class="composer" id="form">
-    <div id="notice"></div>
-    <div id="reply-preview" class="reply-preview">
-      <div class="reply-preview-text">
-        <strong id="reply-author">답장</strong>
-        <p id="reply-text"></p>
+  <div class="layout sidebar-closed" id="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <h2>카테고리</h2>
+        <button class="add-button" id="open-create" type="button"
+          aria-label="카테고리 만들기" title="카테고리 만들기">＋</button>
       </div>
-      <button type="button" class="cancel-reply" id="cancel-reply" aria-label="답장 취소">×</button>
-    </div>
 
-    <div id="mention-list"></div>
+      <nav class="category-list" id="category-list">
+        <div class="system">카테고리를 불러오는 중...</div>
+      </nav>
 
-    <div class="input-row">
-      <textarea id="message" rows="1" placeholder="메시지를 입력하세요..." autocomplete="off"></textarea>
-      <button id="send" type="submit">전송</button>
-    </div>
-  </form>
-</div>
+      <div class="sidebar-bottom">
+        카테고리마다 별도의 채팅방이 있어요.<br>
+        ＋ 버튼으로 누구나 카테고리를 만들 수 있어요.
+      </div>
+    </aside>
 
-<div class="modal" id="nickname-modal">
-  <div class="modal-card">
-    <h2>Axion에 오신 것을 환영해요</h2>
-    <p>채팅에서 사용할 닉네임을 입력하세요.</p>
-    <form id="join-form">
-      <input id="nickname" maxlength="20" placeholder="닉네임" required>
-      <button id="join" type="submit">채팅 입장</button>
-    </form>
+    <main class="chat">
+      <div class="room-head">
+        <span class="room-hash">#</span>
+        <div>
+          <h2 class="room-title" id="room-title">채팅방</h2>
+          <p class="room-subtitle" id="room-subtitle">카테고리를 선택하세요.</p>
+        </div>
+      </div>
+
+      <section class="messages" id="messages" aria-live="polite">
+        <div class="system">닉네임으로 입장해 주세요.</div>
+      </section>
+
+      <div class="composer-wrap">
+        <form class="composer" id="form">
+          <div class="mention-list" id="mention-list" role="listbox"></div>
+          <input id="message" maxlength="1000" placeholder="메시지를 입력하세요..."
+            autocomplete="off" disabled>
+          <button class="send-button" id="send" type="submit" disabled>보내기</button>
+        </form>
+      </div>
+    </main>
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<div class="join" id="join">
+  <div class="joinbox">
+    <h2>Axion에 입장</h2>
+    <p>사용할 닉네임을 입력하세요. 다른 사람과 같은 닉네임을 사용할 수도 있으니 개인정보는 입력하지 마세요.</p>
+    <input id="nickname" maxlength="20" placeholder="닉네임 (최대 20자)" autocomplete="nickname">
+    <button class="primary" id="enter" type="button">채팅 시작하기</button>
+    <div class="small">입장 후 카테고리를 선택하거나 새로 만들 수 있어요.</div>
+    <div class="err" id="error"></div>
+  </div>
+</div>
 
-<script>
+<div class="modal-backdrop" id="create-modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="create-title">
+    <h3 id="create-title">새 카테고리 만들기</h3>
+    <p>카테고리 이름을 정하세요. 생성된 카테고리는 모든 접속자에게 표시됩니다.</p>
+    <input id="category-name" maxlength="30" placeholder="예: 잡담, 게임, 공지">
+    <div class="err" id="category-error"></div>
+    <div class="modal-actions">
+      <button class="secondary" id="cancel-create" type="button">취소</button>
+      <button class="primary" id="confirm-create" type="button">만들기</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getDatabase, ref, push, set, query, limitToLast,
+  onChildAdded, onValue, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAf-nM5PJRUo2q7TvX2LeZNKxh8A021bck",
   authDomain: "chat-27c50.firebaseapp.com",
@@ -408,344 +545,366 @@ const firebaseConfig = {
   appId: "1:811770063187:web:ba17f4f49ebb682c9cd9a6"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const messagesRef = db.ref("messages");
+const $ = id => document.getElementById(id);
+const colors = ["#3479f6","#8a5cf6","#ed5c9b","#18ad8c","#e99a21","#e0644c"];
 
-const messagesEl = document.getElementById("messages");
-const form = document.getElementById("form");
-const input = document.getElementById("message");
-const sendBtn = document.getElementById("send");
-const notice = document.getElementById("notice");
-const modal = document.getElementById("nickname-modal");
-const nicknameInput = document.getElementById("nickname");
-const replyPreview = document.getElementById("reply-preview");
-const replyAuthor = document.getElementById("reply-author");
-const replyText = document.getElementById("reply-text");
-const mentionList = document.getElementById("mention-list");
+let db;
+let nickname = "";
+let categories = {};
+let activeCategoryId = null;
+let stopMessages = null;
+const knownNames = new Set();
 
-let nickname = localStorage.getItem("axion_nickname") || "";
-let selectedReply = null;
-let knownMessages = new Map();
-let knownNames = new Set();
-let firstLoad = true;
-
-if (nickname) {
-  modal.style.display = "none";
-  startChat();
-} else {
-  nicknameInput.focus();
+function hash(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return h;
 }
 
-document.getElementById("join-form").addEventListener("submit", e => {
-  e.preventDefault();
-  const value = nicknameInput.value.trim();
-  if (!value) return;
-  nickname = value;
-  localStorage.setItem("axion_nickname", nickname);
-  modal.style.display = "none";
-  startChat();
-});
-
-function startChat() {
-  document.getElementById("status").textContent = "실시간 채팅";
-  messagesRef.on("child_added", snapshot => {
-    const data = snapshot.val();
-    if (!data || !data.text) return;
-    renderMessage(snapshot.key, data);
-    knownNames.add(data.name);
-    updateMentionList();
-  }, error => {
-    notice.textContent = "메시지를 불러오지 못했습니다: " + error.message;
-  });
+function toast(message) {
+  const el = $("toast");
+  el.textContent = message;
+  el.style.display = "block";
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => el.style.display = "none", 2800);
 }
 
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, ch => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;",
-    '"': "&quot;", "'": "&#39;"
-  })[ch]);
-}
+function renderCategories() {
+  const list = $("category-list");
+  list.replaceChildren();
 
-function formatText(value) {
-  const safe = escapeHtml(value);
-  return safe.replace(/(^|\s)@([\p{L}\p{N}_-]{1,20})/gu,
-    (match, prefix, name) =>
-      `${prefix}<span class="mention">@${name}</span>`
+  const entries = Object.entries(categories).sort(
+    (a, b) => (a[1].createdAt || 0) - (b[1].createdAt || 0)
   );
+
+  if (!entries.length) {
+    const empty = document.createElement("div");
+    empty.className = "system";
+    empty.textContent = "아직 카테고리가 없어요. ＋를 눌러 만들어 보세요.";
+    list.append(empty);
+    return;
+  }
+
+  for (const [id, data] of entries) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "category-item" + (id === activeCategoryId ? " active" : "");
+
+    const symbol = document.createElement("span");
+    symbol.className = "category-hash";
+    symbol.textContent = "#";
+
+    const name = document.createElement("span");
+    name.className = "category-name";
+    name.textContent = data.name || "이름 없는 카테고리";
+
+    button.append(symbol, name);
+    button.addEventListener("click", () => openCategory(id));
+    list.append(button);
+  }
 }
 
-function renderMessage(key, data) {
-  const empty = document.getElementById("empty");
+function showEmptyMessage(text) {
+  $("messages").replaceChildren();
+  const el = document.createElement("div");
+  el.className = "system";
+  el.textContent = text;
+  $("messages").append(el);
+}
+
+function appendHighlightedText(container, text) {
+  for (const part of text.split(/(@[^\s@]+)/g)) {
+    if (part.startsWith("@") && part.length > 1) {
+      const span = document.createElement("span");
+      span.className = "mention-highlight";
+      span.textContent = part;
+      container.append(span);
+    } else {
+      container.append(document.createTextNode(part));
+    }
+  }
+}
+
+function showMessage(data) {
+  const empty = $("messages").querySelector(".system");
   if (empty) empty.remove();
 
-  knownMessages.set(key, data);
-
-  const row = document.createElement("article");
-  row.className = "message" + (data.name === nickname ? " mine" : "");
-  row.id = "msg-" + key;
-  row.dataset.key = key;
+  const row = document.createElement("div");
+  row.className = "msg";
 
   const avatar = document.createElement("div");
   avatar.className = "avatar";
-  avatar.textContent = (data.name || "?").slice(0, 1).toUpperCase();
+  avatar.style.background = colors[Math.abs(hash(data.name || "?")) % colors.length];
+  avatar.textContent = (data.name || "?").slice(0, 1);
 
   const content = document.createElement("div");
-  content.className = "message-content";
+  content.className = "msg-content";
 
   const meta = document.createElement("div");
   meta.className = "meta";
 
-  const author = document.createElement("span");
-  author.className = "author";
-  author.textContent = data.name || "익명";
+  const name = document.createElement("span");
+  name.className = "name";
+  name.textContent = data.name || "익명";
+  knownNames.add(name.textContent);
 
   const time = document.createElement("span");
   time.className = "time";
-  time.textContent = data.time || "";
-
-  meta.append(author, time);
-  content.append(meta);
-
-  if (data.replyTo && data.replyTo.key) {
-    const quote = document.createElement("button");
-    quote.type = "button";
-    quote.className = "reply-quote";
-    quote.title = "원본 메시지로 이동";
-
-    const quoteName = document.createElement("strong");
-    quoteName.textContent = "↩ " + (data.replyTo.name || "메시지");
-
-    const quoteBody = document.createElement("span");
-    quoteBody.textContent = data.replyTo.text || "";
-
-    quote.append(quoteName, quoteBody);
-    quote.addEventListener("click", () => scrollToMessage(data.replyTo.key));
-    content.append(quote);
-  }
+  time.textContent = typeof data.createdAt === "number"
+    ? new Date(data.createdAt).toLocaleTimeString("ko-KR", {hour:"2-digit", minute:"2-digit"})
+    : "방금";
 
   const bubble = document.createElement("div");
   bubble.className = "bubble";
-  bubble.innerHTML = formatText(data.text);
-  content.append(bubble);
+  appendHighlightedText(bubble, data.text || "");
 
-  const actions = document.createElement("div");
-  actions.className = "message-actions";
-
-  const replyBtn = document.createElement("button");
-  replyBtn.type = "button";
-  replyBtn.className = "reply-btn";
-  replyBtn.innerHTML = "↩ <span>답장</span>";
-  replyBtn.setAttribute("aria-label", (data.name || "메시지") + "에게 답장");
-
-  replyBtn.addEventListener("click", () => {
-    setReply(key, data);
-  });
-
-  actions.append(replyBtn);
-  content.append(actions);
-
+  meta.append(name, time);
+  content.append(meta, bubble);
   row.append(avatar, content);
-  messagesEl.append(row);
-
-  messagesEl.scrollTop = messagesEl.scrollHeight;
+  $("messages").append(row);
+  $("messages").scrollTop = $("messages").scrollHeight;
 }
 
-function setReply(key, data) {
-  selectedReply = {
-    key,
-    name: data.name || "익명",
-    text: data.text || ""
-  };
+function openCategory(id) {
+  if (!db || !categories[id]) return;
 
-  replyAuthor.textContent = selectedReply.name + "에게 답장";
-  replyText.textContent = selectedReply.text;
-  replyPreview.classList.add("show");
-  input.placeholder = selectedReply.name + "에게 답장...";
-  input.focus();
-}
+  activeCategoryId = id;
+  $("room-title").textContent = categories[id].name || "채팅방";
+  $("room-subtitle").textContent = "이 카테고리의 실시간 대화";
 
-function clearReply() {
-  selectedReply = null;
-  replyPreview.classList.remove("show");
-  input.placeholder = "메시지를 입력하세요...";
-}
+  renderCategories();
 
-document.getElementById("cancel-reply").addEventListener("click", clearReply);
-
-function scrollToMessage(key) {
-  const target = document.getElementById("msg-" + key);
-  if (!target) {
-    notice.textContent = "원본 메시지를 찾을 수 없습니다.";
-    return;
+  if (stopMessages) {
+    stopMessages();
+    stopMessages = null;
   }
-  target.scrollIntoView({ behavior: "smooth", block: "center" });
-  target.classList.remove("flash");
-  void target.offsetWidth;
-  target.classList.add("flash");
-}
 
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-  const text = input.value.trim();
-  if (!text || !nickname) return;
+  showEmptyMessage("메시지를 불러오는 중...");
 
-  sendBtn.disabled = true;
-  notice.textContent = "";
+  const messageQuery = query(
+    ref(db, `categoryMessages/${id}`),
+    limitToLast(150)
+  );
 
-  const now = new Date();
-  const time = now.toLocaleTimeString("ko-KR", {
-    hour: "2-digit", minute: "2-digit"
+  stopMessages = onChildAdded(messageQuery, snapshot => {
+    const data = snapshot.val();
+    if (data) showMessage(data);
+  }, error => {
+    showEmptyMessage("메시지를 불러오지 못했어요. Firebase 규칙을 확인해 주세요.");
+    console.error(error);
   });
 
-  const messageData = {
-    name: nickname,
-    text,
-    time,
-    timestamp: firebase.database.ServerValue.TIMESTAMP,
-    replyTo: selectedReply ? { ...selectedReply } : null
-  };
-
-  try {
-    await messagesRef.push(messageData);
-    input.value = "";
-    input.style.height = "auto";
-    clearReply();
-    mentionList.style.display = "none";
-  } catch (error) {
-    notice.textContent = "전송 실패: " + error.message;
-  } finally {
-    sendBtn.disabled = false;
-    input.focus();
+  if (window.matchMedia("(max-width: 650px)").matches) {
+    $("layout").classList.add("sidebar-closed");
   }
-});
-
-// @멘션 자동완성
-input.addEventListener("input", () => {
-  input.style.height = "auto";
-  input.style.height = Math.min(input.scrollHeight, 120) + "px";
-  updateMentionList();
-});
-
-function updateMentionList() {
-  const cursor = input.selectionStart;
-  const before = input.value.slice(0, cursor);
-  const match = before.match(/@([\p{L}\p{N}_-]*)$/u);
-
-  if (!match) {
-    mentionList.style.display = "none";
-    return;
-  }
-
-  const query = match[1].toLowerCase();
-  const names = [...knownNames]
-    .filter(name => name && name !== nickname && name.toLowerCase().includes(query))
-    .slice(0, 6);
-
-  mentionList.replaceChildren();
-
-  if (!names.length) {
-    mentionList.style.display = "none";
-    return;
-  }
-
-  names.forEach(name => {
-    const option = document.createElement("div");
-    option.className = "mention-option";
-    option.textContent = "@ " + name;
-    option.addEventListener("click", () => {
-      const start = cursor - match[0].length;
-      const beforeText = input.value.slice(0, start);
-      const afterText = input.value.slice(cursor);
-      input.value = beforeText + "@" + name + " " + afterText;
-      const nextCursor = (beforeText + "@" + name + " ").length;
-      input.focus();
-      input.setSelectionRange(nextCursor, nextCursor);
-      mentionList.style.display = "none";
-    });
-    mentionList.append(option);
-  });
-
-  mentionList.style.display = "block";
 }
 
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    form.requestSubmit();
-  }
-  if (e.key === "Escape") {
-    mentionList.style.display = "none";
-    clearReply();
-  }
-});
-
-document.addEventListener("click", e => {
-  if (!mentionList.contains(e.target) && e.target !== input) {
-    mentionList.style.display = "none";
-  }
-});
-
-// 밝은 테마 / 어두운 테마
-document.getElementById("theme-toggle").addEventListener("click", () => {
-  document.body.classList.toggle("light");
-  localStorage.setItem(
-    "axion_theme",
-    document.body.classList.contains("light") ? "light" : "dark"
+/* 세 줄 메뉴: 사이드바 열기/닫기 */
+$("toggle-sidebar").addEventListener("click", () => {
+  $("layout").classList.toggle("sidebar-closed");
+  const closed = $("layout").classList.contains("sidebar-closed");
+  $("toggle-sidebar").setAttribute(
+    "aria-label",
+    closed ? "카테고리 메뉴 열기" : "카테고리 메뉴 닫기"
   );
 });
 
-if (localStorage.getItem("axion_theme") === "light") {
-  document.body.classList.add("light");
+/* 카테고리 생성: 누구나 가능 */
+function openCreateModal() {
+  $("category-name").value = "";
+  $("category-error").textContent = "";
+  $("create-modal").style.display = "grid";
+  $("category-name").focus();
 }
 
-// 배경 입자 애니메이션
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-let particles = [];
-
-function resizeCanvas() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = window.innerWidth * dpr;
-  canvas.height = window.innerHeight * dpr;
-  canvas.style.width = window.innerWidth + "px";
-  canvas.style.height = window.innerHeight + "px";
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  particles = Array.from({ length: Math.min(55, Math.floor(window.innerWidth / 18)) }, () => ({
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    vx: (Math.random() - .5) * .35,
-    vy: (Math.random() - .5) * .35,
-    r: Math.random() * 1.5 + .5
-  }));
+function closeCreateModal() {
+  $("create-modal").style.display = "none";
 }
 
-function animateParticles() {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = "#478bff";
+$("open-create").addEventListener("click", openCreateModal);
+$("cancel-create").addEventListener("click", closeCreateModal);
 
-  particles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < 0 || p.x > w) p.vx *= -1;
-    if (p.y < 0 || p.y > h) p.vy *= -1;
+$("create-modal").addEventListener("click", event => {
+  if (event.target === $("create-modal")) closeCreateModal();
+});
 
-    ctx.globalAlpha = .45;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fill();
-  });
+$("category-name").addEventListener("keydown", event => {
+  if (event.key === "Enter") $("confirm-create").click();
+  if (event.key === "Escape") closeCreateModal();
+});
 
-  ctx.globalAlpha = 1;
-  requestAnimationFrame(animateParticles);
+$("confirm-create").addEventListener("click", async () => {
+  const name = $("category-name").value.trim();
+
+  if (!name) {
+    $("category-error").textContent = "카테고리 이름을 입력해 주세요.";
+    return;
+  }
+
+  const duplicate = Object.values(categories).some(
+    category => (category.name || "").toLocaleLowerCase("ko-KR") === name.toLocaleLowerCase("ko-KR")
+  );
+
+  if (duplicate) {
+    $("category-error").textContent = "같은 이름의 카테고리가 이미 있어요.";
+    return;
+  }
+
+  $("confirm-create").disabled = true;
+
+  try {
+    const newCategory = push(ref(db, "categories"));
+
+    await set(newCategory, {
+      name,
+      createdAt: Date.now(),
+      createdBy: nickname
+    });
+
+    closeCreateModal();
+    toast("카테고리를 만들었어요.");
+    openCategory(newCategory.key);
+  } catch (error) {
+    $("category-error").textContent =
+      "카테고리를 만들지 못했어요. Firebase 규칙을 확인해 주세요.";
+    console.error(error);
+  } finally {
+    $("confirm-create").disabled = false;
+  }
+});
+
+/* 입장 */
+$("enter").addEventListener("click", async () => {
+  const name = $("nickname").value.trim();
+
+  if (!name) {
+    $("error").textContent = "닉네임을 입력해 주세요.";
+    return;
+  }
+
+  nickname = name;
+  $("enter").disabled = true;
+
+  try {
+    db = getDatabase(initializeApp(firebaseConfig));
+    $("status").textContent = "연결 중...";
+
+    onValue(ref(db, "categories"), snapshot => {
+      categories = snapshot.val() || {};
+      renderCategories();
+
+      if (!activeCategoryId || !categories[activeCategoryId]) {
+        const firstId = Object.keys(categories)[0];
+
+        if (firstId) {
+          openCategory(firstId);
+        } else {
+          showEmptyMessage("아직 카테고리가 없어요. 왼쪽 ＋ 버튼으로 만들어 보세요.");
+          $("room-title").textContent = "채팅방";
+        }
+      } else {
+        $("room-title").textContent = categories[activeCategoryId].name || "채팅방";
+      }
+    }, error => {
+      $("error").textContent = "카테고리 연결 오류: " + error.message;
+      console.error(error);
+    });
+
+    $("join").style.display = "none";
+    $("message").disabled = false;
+    $("send").disabled = false;
+    $("status").textContent = "● 실시간 연결";
+    $("layout").classList.add("sidebar-closed");
+  } catch (error) {
+    $("error").textContent = "연결 실패: " + error.message;
+    $("enter").disabled = false;
+  }
+});
+
+$("nickname").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    $("enter").click();
+  }
+});
+
+/* 메시지 전송 */
+$("form").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const text = $("message").value.trim();
+  if (!text || !db || !nickname || !activeCategoryId) {
+    if (!activeCategoryId) toast("먼저 카테고리를 만들어 주세요.");
+    return;
+  }
+
+  $("send").disabled = true;
+
+  try {
+    await push(ref(db, `categoryMessages/${activeCategoryId}`), {
+      name: nickname,
+      text,
+      createdAt: serverTimestamp()
+    });
+
+    $("message").value = "";
+    $("message").focus();
+    hideMentionList();
+  } catch (error) {
+    toast("메시지를 보내지 못했어요. Firebase 규칙을 확인해 주세요.");
+    console.error(error);
+  } finally {
+    $("send").disabled = false;
+  }
+});
+
+/* @닉네임 자동완성 */
+const mentionBox = $("mention-list");
+const messageBox = $("message");
+
+function hideMentionList() {
+  mentionBox.style.display = "none";
+  mentionBox.replaceChildren();
 }
 
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-animateParticles();
+messageBox.addEventListener("input", () => {
+  const match = messageBox.value.match(/(?:^|\s)@([^\s@]*)$/);
+
+  if (!match) {
+    hideMentionList();
+    return;
+  }
+
+  const keyword = match[1].toLocaleLowerCase("ko-KR");
+  const names = [...knownNames]
+    .filter(name => name !== "익명" &&
+      name.toLocaleLowerCase("ko-KR").includes(keyword))
+    .sort((a, b) => a.localeCompare(b, "ko-KR"));
+
+  mentionBox.replaceChildren();
+
+  for (const name of names) {
+    const option = document.createElement("div");
+    option.className = "mention-option";
+    option.setAttribute("role", "option");
+    option.textContent = "@" + name;
+
+    option.addEventListener("mousedown", event => {
+      event.preventDefault();
+      messageBox.value = messageBox.value.replace(/@([^\s@]*)$/, "@" + name + " ");
+      hideMentionList();
+      messageBox.focus();
+    });
+
+    mentionBox.append(option);
+  }
+
+  mentionBox.style.display = names.length ? "block" : "none";
+});
+
+messageBox.addEventListener("keydown", event => {
+  if (event.key === "Escape") hideMentionList();
+});
 </script>
 </body>
 </html>
