@@ -1,542 +1,485 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1020">
-<title>Axion</title>
+<meta name="theme-color" content="#0d1320">
+<title>Axion - 실시간 채팅</title>
 
 <style>
 :root {
   color-scheme: dark;
-  --bg: #0b1020;
-  --panel: #111a2b;
-  --panel2: #19263b;
-  --line: #293952;
-  --text: #edf3ff;
-  --muted: #93a5c0;
+  --bg: #0d1320;
+  --panel: #141e2d;
+  --panel2: #1b2739;
+  --line: #2a3950;
+  --muted: #9aabc3;
   --blue: #3978f6;
+  --hover: #23344d;
 }
-
 * { box-sizing: border-box; }
-
 body {
   margin: 0;
+  background: var(--bg);
+  color: #eef4ff;
+  font-family: system-ui, -apple-system, "Malgun Gothic", sans-serif;
   height: 100dvh;
   overflow: hidden;
-  background: var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Malgun Gothic", sans-serif;
 }
-
 button, input { font: inherit; }
 button { cursor: pointer; }
-button:disabled { opacity: .5; cursor: not-allowed; }
+button:disabled { opacity: .55; cursor: not-allowed; }
 
 .app {
+  width: 100%;
   height: 100dvh;
   display: flex;
-  flex-direction: column;
+  overflow: hidden;
+  background: var(--panel);
 }
-
-.topbar {
-  height: 68px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 0 16px;
-  background: #0f1728;
-  border-bottom: 1px solid var(--line);
-  z-index: 5;
-}
-
-.menu-button {
-  width: 43px;
-  height: 43px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  background: #19263b;
-  color: white;
-  border: 1px solid var(--line);
-  border-radius: 11px;
-  font-size: 25px;
-}
-
-.menu-button:hover { background: #293b58; }
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
-
-.brand-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #4388ff, #7048ed);
-  display: grid;
-  place-items: center;
-  font-weight: 900;
-}
-
-.brand h1 { margin: 0; font-size: 19px; }
-.brand p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
-
-.status { color: #64e2b0; font-size: 11px; white-space: nowrap; }
-
-.layout {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  position: relative;
-}
-
 .sidebar {
-  width: 265px;
-  flex-shrink: 0;
+  width: 255px;
+  min-width: 255px;
+  background: #101927;
+  border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  background: #0e1727;
-  border-right: 1px solid var(--line);
-  min-height: 0;
+  transition: margin-left .22s ease;
 }
+.app.sidebar-closed .sidebar { margin-left: -255px; }
 
-.sidebar-head {
+.side-head {
+  height: 76px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 14px 12px;
+  border-bottom: 1px solid var(--line);
 }
-
-.sidebar-head h2 {
-  margin: 0;
-  font-size: 12px;
-  color: var(--muted);
-  letter-spacing: 1px;
+.brand {
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: .3px;
 }
-
-.add-button {
-  width: 35px;
-  height: 35px;
-  border-radius: 9px;
+.brand span { color: #6e9cff; }
+.icon-button {
+  width: 40px;
+  height: 40px;
   border: 1px solid var(--line);
-  background: #19263b;
-  color: white;
-  font-size: 24px;
-}
-
-.category-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 4px 9px 12px;
-}
-
-.category-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px;
-  margin: 3px 0;
-  border: 0;
   border-radius: 10px;
-  background: transparent;
-  color: #b9c7dc;
-  text-align: left;
-}
-
-.category-item:hover { background: #19263b; }
-
-.category-item.active {
-  background: #20365b;
-  color: white;
-  box-shadow: inset 3px 0 #5790ff;
-}
-
-.category-hash {
-  width: 28px;
-  height: 28px;
+  color: #eef4ff;
+  background: #192538;
   display: grid;
   place-items: center;
-  flex-shrink: 0;
-  background: #1d2b43;
-  color: #8db5ff;
-  border-radius: 8px;
 }
+.icon-button:hover { background: var(--hover); }
 
-.category-name {
+.side-label {
+  padding: 20px 16px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.add-room {
+  border: 0;
+  background: transparent;
+  color: #9dbaff;
+  font-size: 23px;
+  line-height: 1;
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+}
+.add-room:hover { background: var(--hover); }
+.room-list {
+  padding: 0 9px 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+.room-button {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #c4d0e3;
+  text-align: left;
+  margin: 3px 0;
+}
+.room-button:hover { background: #1a273a; }
+.room-button.active {
+  background: #24477c;
+  color: white;
+}
+.room-hash {
+  font-size: 20px;
+  font-weight: 700;
+  color: #7e9bc7;
+}
+.room-button.active .room-hash { color: #a9c7ff; }
+.room-name {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 14px;
 }
-
-.sidebar-bottom {
-  padding: 13px;
+.side-foot {
   border-top: 1px solid var(--line);
+  padding: 13px 15px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
-.chat {
-  flex: 1;
+.main {
   min-width: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
-
-.room-head {
-  height: 68px;
-  flex-shrink: 0;
+.head {
+  min-height: 76px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 22px;
-  border-bottom: 1px solid var(--line);
+  gap: 14px;
 }
-
-.room-hash { font-size: 28px; color: #7ea9ff; }
-.room-title { margin: 0; font-size: 16px; }
-.room-subtitle { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
-
+.menu-button { flex: none; }
+.head-title { min-width: 0; flex: 1; }
+.head h1 {
+  font-size: 18px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.head p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 5px 0 0;
+}
+.status {
+  flex: none;
+  font-size: 12px;
+  color: #70e1b4;
+}
 .messages {
+  padding: 22px;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 22px;
   display: flex;
   flex-direction: column;
-  gap: 17px;
+  gap: 16px;
+  scroll-behavior: smooth;
 }
-
+.msg {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.avatar {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-weight: 800;
+  flex: none;
+  color: white;
+}
+.message-body { min-width: 0; max-width: min(780px, 90%); }
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  margin: 0 0 5px;
+}
+.name { font-weight: 750; }
+.time { color: var(--muted); }
+.bubble {
+  background: #202d40;
+  padding: 10px 13px;
+  border-radius: 4px 14px 14px 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+}
+.mention-highlight {
+  color: #9ec5ff;
+  background: #244d86;
+  border: 1px solid #3978f6;
+  border-radius: 5px;
+  padding: 1px 4px;
+  font-weight: 800;
+}
 .system {
   align-self: center;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
+  line-height: 1.7;
   padding: 12px;
 }
-
-.msg {
-  display: flex;
-  align-items: flex-start;
-  gap: 11px;
-}
-
-.avatar {
-  width: 37px;
-  height: 37px;
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  flex-shrink: 0;
-  color: white;
-  font-weight: 800;
-}
-
-.msg-content { min-width: 0; max-width: calc(100% - 48px); }
-
-.meta {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  margin: 1px 0 6px;
-  font-size: 12px;
-}
-
-.name { font-weight: 750; }
-.time { color: #7f91ad; font-size: 11px; }
-
-.bubble {
-  font-size: 14px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  color: #dce6f6;
-}
-
-.mention-highlight {
-  background: #254b86;
-  color: #a9d0ff;
-  border-radius: 4px;
-  padding: 1px 3px;
-}
-
-.composer-wrap {
-  padding: 12px 20px 17px;
-  border-top: 1px solid var(--line);
-  background: #0f1728;
-}
-
 .composer {
+  position: relative;
+  border-top: 1px solid var(--line);
+  padding: 15px;
   display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 7px;
-  background: #19263b;
-  border: 1px solid #35445c;
-  border-radius: 13px;
+  gap: 10px;
 }
-
-.composer:focus-within { border-color: #5689ff; }
-
 .composer input {
-  flex: 1;
   min-width: 0;
-  padding: 10px;
-  color: white;
-  background: transparent;
-  border: 0;
-  outline: 0;
-}
-
-.composer input::placeholder { color: #7184a1; }
-
-.send-button, .primary {
-  padding: 11px 16px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--blue);
-  color: white;
-  font-weight: 750;
-}
-
-.send-button:hover, .primary:hover { background: #255bd0; }
-
-.mention-list {
-  display: none;
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  max-height: 180px;
-  overflow-y: auto;
-  background: #19263b;
-  border: 1px solid #354762;
-  border-radius: 12px;
-  padding: 5px;
-  z-index: 4;
-}
-
-.composer { position: relative; }
-
-.mention-option {
-  padding: 9px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.mention-option:hover { background: #293b58; }
-
-.join {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: #070b13ed;
-}
-
-.joinbox {
-  width: min(400px, 100%);
-  padding: 27px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-}
-
-.joinbox h2 { margin: 0; font-size: 23px; }
-.joinbox p { color: var(--muted); font-size: 13px; line-height: 1.6; }
-
-.joinbox input, .modal input {
-  width: 100%;
-  padding: 13px;
-  margin: 5px 0 12px;
+  flex: 1;
+  background: var(--panel2);
   border: 1px solid #35445c;
-  border-radius: 10px;
-  background: #0e1727;
+  border-radius: 11px;
+  padding: 13px;
   color: white;
   outline: none;
 }
-
-.joinbox input:focus, .modal input:focus { border-color: #5689ff; }
-.joinbox .primary { width: 100%; padding: 13px; }
-.small { color: var(--muted); font-size: 11px; line-height: 1.5; margin-top: 13px; }
-.err { color: #ff9292; font-size: 12px; line-height: 1.5; margin-top: 8px; }
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 15;
-  display: none;
-  place-items: center;
-  padding: 20px;
-  background: #050914c9;
-}
-
-.modal {
-  width: min(390px, 100%);
-  padding: 23px;
-  background: #141f32;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-}
-
-.modal h3 { margin: 0 0 9px; }
-.modal p { color: var(--muted); font-size: 13px; line-height: 1.5; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
-.secondary {
-  padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: #202d42;
+.composer input:focus { border-color: #5689ff; }
+.primary-button {
+  border: 0;
+  background: var(--blue);
   color: white;
-}
-
-.toast {
-  display: none;
-  position: fixed;
-  z-index: 30;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: calc(100% - 30px);
-  padding: 11px 15px;
-  background: #26364e;
-  border: 1px solid #415674;
+  font-weight: 750;
   border-radius: 10px;
-  color: white;
+  padding: 0 18px;
+}
+.primary-button:hover { background: #4d87ff; }
+#mention-list {
+  display: none;
+  position: absolute;
+  bottom: calc(100% - 5px);
+  left: 15px;
+  right: 100px;
+  background: #202d40;
+  border: 1px solid #35445c;
+  border-radius: 10px;
+  max-height: 190px;
+  overflow-y: auto;
+  z-index: 20;
+  box-shadow: 0 8px 24px #0008;
+  padding: 4px;
+}
+.mention-option {
+  padding: 9px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.mention-option:hover { background: #294b7d; }
+.mention-empty {
+  padding: 10px;
+  color: var(--muted);
   font-size: 12px;
 }
 
-.layout.sidebar-closed .sidebar { display: none; }
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #070b13ed;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.modal {
+  width: min(400px, 100%);
+  padding: 24px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 20px 70px #0006;
+}
+.modal h2 { margin: 0 0 8px; font-size: 21px; }
+.modal p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 15px;
+}
+.modal input {
+  width: 100%;
+  padding: 13px;
+  margin: 0 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel2);
+  color: white;
+  outline: none;
+}
+.modal input:focus { border-color: #5689ff; }
+.modal-actions { display: flex; gap: 9px; }
+.modal-actions button { flex: 1; min-height: 43px; }
+.secondary-button {
+  background: #263349;
+  border: 1px solid var(--line);
+  color: white;
+  border-radius: 10px;
+}
+.error {
+  color: #ff9292;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 10px;
+  overflow-wrap: anywhere;
+}
+.joinbox .primary-button { width: 100%; min-height: 45px; }
+.small {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+.hidden { display: none !important; }
 
-@media(max-width:650px) {
-  .topbar { height: 60px; padding: 0 10px; gap: 9px; }
-  .brand h1 { font-size: 16px; }
-  .brand p { display: none; }
-  .status { font-size: 10px; }
+@media (max-width: 600px) {
   .sidebar {
     position: absolute;
-    z-index: 6;
+    z-index: 30;
     top: 0;
     bottom: 0;
     left: 0;
-    width: min(285px, 85vw);
-    box-shadow: 18px 0 40px #0005;
+    box-shadow: 12px 0 30px #0004;
   }
-  .layout.sidebar-closed .sidebar { display: none; }
-  .room-head { height: 60px; padding: 0 14px; }
-  .messages { padding: 16px 12px; }
-  .composer-wrap { padding: 10px; }
-  .send-button { padding: 10px 12px; }
+  .app.sidebar-closed .sidebar { margin-left: -255px; }
+  .head { padding: 10px 12px; gap: 9px; min-height: 68px; }
+  .head h1 { font-size: 16px; }
+  .head p { font-size: 11px; }
+  .status { font-size: 10px; }
+  .messages { padding: 15px 12px; gap: 14px; }
+  .composer { padding: 10px; gap: 7px; }
+  .composer input { padding: 12px 10px; font-size: 14px; }
+  .primary-button { padding: 0 12px; }
+  #mention-list { left: 10px; right: 85px; }
 }
 </style>
 </head>
 
 <body>
-<div class="app">
-  <header class="topbar">
-    <button id="toggle-sidebar" class="menu-button" type="button"
-      aria-label="카테고리 메뉴 열기" title="카테고리 메뉴">☰</button>
+<div class="app sidebar-closed" id="app">
 
-    <div class="brand">
-      <div class="brand-icon">A</div>
-      <div>
-        <h1>Axion</h1>
-        <p>실시간 채팅</p>
-      </div>
+  <aside class="sidebar" id="sidebar">
+    <div class="side-head">
+      <div class="brand"><span>Axion</span> Chat</div>
+      <button class="icon-button" id="close-sidebar" type="button"
+        aria-label="메뉴 닫기">✕</button>
     </div>
-    <span class="status" id="status">연결 대기 중</span>
-  </header>
 
-  <div class="layout sidebar-closed" id="layout">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-head">
-        <h2>카테고리</h2>
-        <button class="add-button" id="open-create" type="button"
-          aria-label="카테고리 만들기" title="카테고리 만들기">＋</button>
+    <div class="side-label">
+      <span>채팅 카테고리</span>
+      <button class="add-room" id="add-room" type="button"
+        aria-label="카테고리 만들기" title="카테고리 만들기">+</button>
+    </div>
+
+    <nav class="room-list" id="room-list">
+      <div class="system">입장 후 카테고리가 표시됩니다.</div>
+    </nav>
+
+    <div class="side-foot">
+      실시간 채팅 공간<br>
+      원하는 카테고리를 만들어 친구들과 대화하세요.
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="head">
+      <button class="icon-button menu-button" id="menu-button"
+        type="button" aria-label="메뉴 열기" title="카테고리 메뉴">
+        <svg width="21" height="21" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+
+      <div class="head-title">
+        <h1 id="room-title">Axion 채팅</h1>
+        <p id="room-description">카테고리를 선택해 대화를 시작하세요.</p>
       </div>
+      <span class="status" id="status">연결 대기 중</span>
+    </header>
 
-      <nav class="category-list" id="category-list">
-        <div class="system">카테고리를 불러오는 중...</div>
-      </nav>
+    <section class="messages" id="messages" aria-live="polite">
+      <div class="system">닉네임을 입력하고 채팅에 입장하세요.</div>
+    </section>
 
-      <div class="sidebar-bottom">
-        카테고리마다 별도의 채팅방이 있어요.<br>
-        ＋ 버튼으로 누구나 카테고리를 만들 수 있어요.
-      </div>
-    </aside>
+    <form class="composer" id="form">
+      <input id="message" maxlength="1000"
+        placeholder="메시지를 입력하세요... (@로 친구 멘션)"
+        autocomplete="off" disabled>
+      <div id="mention-list" role="listbox" aria-label="멘션할 친구"></div>
+      <button class="primary-button" id="send" type="submit" disabled>
+        보내기
+      </button>
+    </form>
+  </main>
+</div>
 
-    <main class="chat">
-      <div class="room-head">
-        <span class="room-hash">#</span>
-        <div>
-          <h2 class="room-title" id="room-title">채팅방</h2>
-          <p class="room-subtitle" id="room-subtitle">카테고리를 선택하세요.</p>
-        </div>
-      </div>
-
-      <section class="messages" id="messages" aria-live="polite">
-        <div class="system">닉네임으로 입장해 주세요.</div>
-      </section>
-
-      <div class="composer-wrap">
-        <form class="composer" id="form">
-          <div class="mention-list" id="mention-list" role="listbox"></div>
-          <input id="message" maxlength="1000" placeholder="메시지를 입력하세요..."
-            autocomplete="off" disabled>
-          <button class="send-button" id="send" type="submit" disabled>보내기</button>
-        </form>
-      </div>
-    </main>
+<!-- 닉네임 입장 창 -->
+<div class="overlay" id="join">
+  <div class="modal joinbox">
+    <h2>Axion에 오신 것을 환영합니다</h2>
+    <p>친구들과 같은 사이트에 접속한 뒤 사용할 닉네임을 입력하세요.</p>
+    <input id="nickname" maxlength="20"
+      placeholder="닉네임 (최대 20자)" autocomplete="nickname">
+    <button class="primary-button" id="enter" type="button">
+      채팅 시작하기
+    </button>
+    <div class="small">
+      메시지와 카테고리는 Firebase 실시간 데이터베이스를 통해 공유됩니다.
+    </div>
+    <div class="error" id="join-error"></div>
   </div>
 </div>
 
-<div class="join" id="join">
-  <div class="joinbox">
-    <h2>Axion에 입장</h2>
-    <p>사용할 닉네임을 입력하세요. 다른 사람과 같은 닉네임을 사용할 수도 있으니 개인정보는 입력하지 마세요.</p>
-    <input id="nickname" maxlength="20" placeholder="닉네임 (최대 20자)" autocomplete="nickname">
-    <button class="primary" id="enter" type="button">채팅 시작하기</button>
-    <div class="small">입장 후 카테고리를 선택하거나 새로 만들 수 있어요.</div>
-    <div class="err" id="error"></div>
-  </div>
-</div>
-
-<div class="modal-backdrop" id="create-modal">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="create-title">
-    <h3 id="create-title">새 카테고리 만들기</h3>
-    <p>카테고리 이름을 정하세요. 생성된 카테고리는 모든 접속자에게 표시됩니다.</p>
-    <input id="category-name" maxlength="30" placeholder="예: 잡담, 게임, 공지">
-    <div class="err" id="category-error"></div>
+<!-- 카테고리 생성 창 -->
+<div class="overlay hidden" id="create-modal">
+  <div class="modal">
+    <h2>새 카테고리 만들기</h2>
+    <p>새 채팅방 이름을 정하세요. 모든 입장자가 카테고리를 만들 수 있습니다.</p>
+    <input id="category-name" maxlength="30"
+      placeholder="예: 게임 이야기">
     <div class="modal-actions">
-      <button class="secondary" id="cancel-create" type="button">취소</button>
-      <button class="primary" id="confirm-create" type="button">만들기</button>
+      <button class="secondary-button" id="cancel-create" type="button">
+        취소
+      </button>
+      <button class="primary-button" id="confirm-create" type="button">
+        만들기
+      </button>
     </div>
+    <div class="error" id="category-error"></div>
   </div>
 </div>
-<div class="toast" id="toast"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
 import {
-  getDatabase, ref, push, set, query, limitToLast,
-  onChildAdded, onValue, serverTimestamp
+  getDatabase,
+  ref,
+  push,
+  set,
+  query,
+  limitToLast,
+  onValue,
+  onChildAdded,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAf-nM5PJRUo2q7TvX2LeZNKxh8A021bck",
+  apiKey: "AIzaSyAf-nM5PJRUo2q7TvX2LeZNXKh8A021bck",
   authDomain: "chat-27c50.firebaseapp.com",
   databaseURL: "https://chat-27c50-default-rtdb.firebaseio.com",
   projectId: "chat-27c50",
@@ -546,364 +489,463 @@ const firebaseConfig = {
 };
 
 const $ = id => document.getElementById(id);
-const colors = ["#3479f6","#8a5cf6","#ed5c9b","#18ad8c","#e99a21","#e0644c"];
+const colors = [
+  "#3479f6", "#8a5cf6", "#ed5c9b",
+  "#18ad8c", "#e99a21", "#e0644c"
+];
 
+let app;
 let db;
 let nickname = "";
+let currentCategoryId = null;
 let categories = {};
-let activeCategoryId = null;
-let stopMessages = null;
-const knownNames = new Set();
+let unsubscribeMessages = null;
+let unsubscribeCategories = null;
+let entering = false;
 
-function hash(s) {
+function hash(value) {
   let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  for (let i = 0; i < value.length; i++) {
+    h = (h * 31 + value.charCodeAt(i)) | 0;
+  }
   return h;
 }
 
-function toast(message) {
-  const el = $("toast");
-  el.textContent = message;
-  el.style.display = "block";
-  clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => el.style.display = "none", 2800);
-}
-
-function renderCategories() {
-  const list = $("category-list");
-  list.replaceChildren();
-
-  const entries = Object.entries(categories).sort(
-    (a, b) => (a[1].createdAt || 0) - (b[1].createdAt || 0)
-  );
-
-  if (!entries.length) {
-    const empty = document.createElement("div");
-    empty.className = "system";
-    empty.textContent = "아직 카테고리가 없어요. ＋를 눌러 만들어 보세요.";
-    list.append(empty);
-    return;
-  }
-
-  for (const [id, data] of entries) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "category-item" + (id === activeCategoryId ? " active" : "");
-
-    const symbol = document.createElement("span");
-    symbol.className = "category-hash";
-    symbol.textContent = "#";
-
-    const name = document.createElement("span");
-    name.className = "category-name";
-    name.textContent = data.name || "이름 없는 카테고리";
-
-    button.append(symbol, name);
-    button.addEventListener("click", () => openCategory(id));
-    list.append(button);
-  }
-}
-
-function showEmptyMessage(text) {
+function setSystemMessage(text) {
   $("messages").replaceChildren();
-  const el = document.createElement("div");
-  el.className = "system";
-  el.textContent = text;
-  $("messages").append(el);
+  const element = document.createElement("div");
+  element.className = "system";
+  element.textContent = text;
+  $("messages").appendChild(element);
 }
 
 function appendHighlightedText(container, text) {
-  for (const part of text.split(/(@[^\s@]+)/g)) {
+  const parts = text.split(/(@[^\s@]+)/g);
+
+  for (const part of parts) {
     if (part.startsWith("@") && part.length > 1) {
-      const span = document.createElement("span");
-      span.className = "mention-highlight";
-      span.textContent = part;
-      container.append(span);
+      const tag = document.createElement("span");
+      tag.className = "mention-highlight";
+      tag.textContent = part;
+      container.appendChild(tag);
     } else {
-      container.append(document.createTextNode(part));
+      container.appendChild(document.createTextNode(part));
     }
   }
 }
 
 function showMessage(data) {
+  if (!data || typeof data !== "object") return;
+
   const empty = $("messages").querySelector(".system");
   if (empty) empty.remove();
 
   const row = document.createElement("div");
   row.className = "msg";
 
+  const displayName = String(data.name || "익명");
   const avatar = document.createElement("div");
   avatar.className = "avatar";
-  avatar.style.background = colors[Math.abs(hash(data.name || "?")) % colors.length];
-  avatar.textContent = (data.name || "?").slice(0, 1);
+  avatar.style.background =
+    colors[Math.abs(hash(displayName)) % colors.length];
+  avatar.textContent = displayName.slice(0, 1);
 
-  const content = document.createElement("div");
-  content.className = "msg-content";
+  const body = document.createElement("div");
+  body.className = "message-body";
 
   const meta = document.createElement("div");
   meta.className = "meta";
 
   const name = document.createElement("span");
   name.className = "name";
-  name.textContent = data.name || "익명";
-  knownNames.add(name.textContent);
+  name.textContent = displayName;
 
   const time = document.createElement("span");
   time.className = "time";
-  time.textContent = typeof data.createdAt === "number"
-    ? new Date(data.createdAt).toLocaleTimeString("ko-KR", {hour:"2-digit", minute:"2-digit"})
+
+  const timestamp = Number(data.createdAt);
+  time.textContent = timestamp
+    ? new Date(timestamp).toLocaleTimeString("ko-KR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      })
     : "방금";
 
   const bubble = document.createElement("div");
   bubble.className = "bubble";
-  appendHighlightedText(bubble, data.text || "");
+  appendHighlightedText(bubble, String(data.text || ""));
 
   meta.append(name, time);
-  content.append(meta, bubble);
-  row.append(avatar, content);
-  $("messages").append(row);
+  body.append(meta, bubble);
+  row.append(avatar, body);
+  $("messages").appendChild(row);
+
   $("messages").scrollTop = $("messages").scrollHeight;
 }
 
-function openCategory(id) {
-  if (!db || !categories[id]) return;
+function renderCategories() {
+  const list = $("room-list");
+  list.replaceChildren();
 
-  activeCategoryId = id;
-  $("room-title").textContent = categories[id].name || "채팅방";
-  $("room-subtitle").textContent = "이 카테고리의 실시간 대화";
+  const entries = Object.entries(categories)
+    .filter(([id, data]) =>
+      data && typeof data.name === "string"
+    )
+    .sort((a, b) =>
+      (Number(a[1].createdAt) || 0) -
+      (Number(b[1].createdAt) || 0)
+    );
 
-  renderCategories();
-
-  if (stopMessages) {
-    stopMessages();
-    stopMessages = null;
+  if (entries.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "system";
+    empty.textContent = "카테고리가 없습니다. + 버튼으로 만들어 보세요.";
+    list.appendChild(empty);
+    return;
   }
 
-  showEmptyMessage("메시지를 불러오는 중...");
+  for (const [id, data] of entries) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "room-button" +
+      (id === currentCategoryId ? " active" : "");
 
-  const messageQuery = query(
-    ref(db, `categoryMessages/${id}`),
+    const hashIcon = document.createElement("span");
+    hashIcon.className = "room-hash";
+    hashIcon.textContent = "#";
+
+    const name = document.createElement("span");
+    name.className = "room-name";
+    name.textContent = data.name;
+
+    button.append(hashIcon, name);
+    button.addEventListener("click", () => openCategory(id));
+    list.appendChild(button);
+  }
+}
+
+function openCategory(id) {
+  if (!categories[id]) return;
+
+  currentCategoryId = id;
+  renderCategories();
+
+  $("room-title").textContent = "# " + categories[id].name;
+  $("room-description").textContent =
+    "이 카테고리에 접속한 친구들과 실시간으로 대화하세요.";
+
+  $("message").disabled = false;
+  $("send").disabled = false;
+  $("message").placeholder =
+    "#" + categories[id].name + "에 메시지 보내기... (@멘션)";
+  $("message").focus();
+
+  $("mention-list").style.display = "none";
+  setSystemMessage("메시지를 불러오는 중...");
+
+  if (unsubscribeMessages) {
+    unsubscribeMessages();
+    unsubscribeMessages = null;
+  }
+
+  const messagesQuery = query(
+    ref(db, "categoryMessages/" + id),
     limitToLast(150)
   );
 
-  stopMessages = onChildAdded(messageQuery, snapshot => {
-    const data = snapshot.val();
-    if (data) showMessage(data);
-  }, error => {
-    showEmptyMessage("메시지를 불러오지 못했어요. Firebase 규칙을 확인해 주세요.");
-    console.error(error);
-  });
-
-  if (window.matchMedia("(max-width: 650px)").matches) {
-    $("layout").classList.add("sidebar-closed");
-  }
-}
-
-/* 세 줄 메뉴: 사이드바 열기/닫기 */
-$("toggle-sidebar").addEventListener("click", () => {
-  $("layout").classList.toggle("sidebar-closed");
-  const closed = $("layout").classList.contains("sidebar-closed");
-  $("toggle-sidebar").setAttribute(
-    "aria-label",
-    closed ? "카테고리 메뉴 열기" : "카테고리 메뉴 닫기"
+  unsubscribeMessages = onChildAdded(
+    messagesQuery,
+    snapshot => {
+      const data = snapshot.val();
+      if (data) showMessage(data);
+    },
+    error => {
+      setSystemMessage("메시지를 불러오지 못했습니다: " + error.message);
+    }
   );
-});
-
-/* 카테고리 생성: 누구나 가능 */
-function openCreateModal() {
-  $("category-name").value = "";
-  $("category-error").textContent = "";
-  $("create-modal").style.display = "grid";
-  $("category-name").focus();
 }
 
-function closeCreateModal() {
-  $("create-modal").style.display = "none";
-}
-
-$("open-create").addEventListener("click", openCreateModal);
-$("cancel-create").addEventListener("click", closeCreateModal);
-
-$("create-modal").addEventListener("click", event => {
-  if (event.target === $("create-modal")) closeCreateModal();
-});
-
-$("category-name").addEventListener("keydown", event => {
-  if (event.key === "Enter") $("confirm-create").click();
-  if (event.key === "Escape") closeCreateModal();
-});
-
-$("confirm-create").addEventListener("click", async () => {
+async function createCategory() {
   const name = $("category-name").value.trim();
+  $("category-error").textContent = "";
 
   if (!name) {
     $("category-error").textContent = "카테고리 이름을 입력해 주세요.";
     return;
   }
 
-  const duplicate = Object.values(categories).some(
-    category => (category.name || "").toLocaleLowerCase("ko-KR") === name.toLocaleLowerCase("ko-KR")
+  if (!db || !nickname) {
+    $("category-error").textContent = "먼저 채팅에 입장해 주세요.";
+    return;
+  }
+
+  const duplicate = Object.values(categories).some(category =>
+    category &&
+    typeof category.name === "string" &&
+    category.name.trim().toLocaleLowerCase() === name.toLocaleLowerCase()
   );
 
   if (duplicate) {
-    $("category-error").textContent = "같은 이름의 카테고리가 이미 있어요.";
+    $("category-error").textContent = "이미 같은 이름의 카테고리가 있습니다.";
     return;
   }
 
   $("confirm-create").disabled = true;
 
   try {
-    const newCategory = push(ref(db, "categories"));
+    const newCategoryRef = push(ref(db, "categories"));
 
-    await set(newCategory, {
+    await set(newCategoryRef, {
       name,
       createdAt: Date.now(),
       createdBy: nickname
     });
 
-    closeCreateModal();
-    toast("카테고리를 만들었어요.");
-    openCategory(newCategory.key);
+    $("category-name").value = "";
+    $("create-modal").classList.add("hidden");
+
+    // Firebase 카테고리 목록에 반영된 뒤 방을 선택합니다.
+    openCategory(newCategoryRef.key);
   } catch (error) {
     $("category-error").textContent =
-      "카테고리를 만들지 못했어요. Firebase 규칙을 확인해 주세요.";
+      "카테고리를 만들지 못했습니다. Firebase 데이터베이스 규칙을 확인하세요.";
     console.error(error);
   } finally {
     $("confirm-create").disabled = false;
   }
-});
+}
 
-/* 입장 */
-$("enter").addEventListener("click", async () => {
+async function enterChat() {
+  if (entering) return;
+
   const name = $("nickname").value.trim();
+  $("join-error").textContent = "";
 
   if (!name) {
-    $("error").textContent = "닉네임을 입력해 주세요.";
+    $("join-error").textContent = "닉네임을 입력해 주세요.";
     return;
   }
 
   nickname = name;
+  entering = true;
   $("enter").disabled = true;
+  $("status").textContent = "연결 중...";
 
   try {
-    db = getDatabase(initializeApp(firebaseConfig));
-    $("status").textContent = "연결 중...";
+    app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
 
-    onValue(ref(db, "categories"), snapshot => {
-      categories = snapshot.val() || {};
-      renderCategories();
+    unsubscribeCategories = onValue(
+      ref(db, "categories"),
+      async snapshot => {
+        categories = snapshot.val() || {};
+        renderCategories();
 
-      if (!activeCategoryId || !categories[activeCategoryId]) {
-        const firstId = Object.keys(categories)[0];
-
-        if (firstId) {
-          openCategory(firstId);
-        } else {
-          showEmptyMessage("아직 카테고리가 없어요. 왼쪽 ＋ 버튼으로 만들어 보세요.");
-          $("room-title").textContent = "채팅방";
+        // 최초 입장 시 카테고리가 없다면 기본 채팅방을 생성합니다.
+        if (Object.keys(categories).length === 0 && !currentCategoryId) {
+          try {
+            const defaultRef = push(ref(db, "categories"));
+            await set(defaultRef, {
+              name: "일반",
+              createdAt: Date.now(),
+              createdBy: nickname
+            });
+            openCategory(defaultRef.key);
+          } catch (error) {
+            $("status").textContent = "카테고리 생성 실패";
+            setSystemMessage(
+              "카테고리를 불러올 수 없습니다. Firebase 데이터베이스 규칙을 확인해 주세요."
+            );
+            console.error(error);
+          }
+          return;
         }
-      } else {
-        $("room-title").textContent = categories[activeCategoryId].name || "채팅방";
-      }
-    }, error => {
-      $("error").textContent = "카테고리 연결 오류: " + error.message;
-      console.error(error);
-    });
 
-    $("join").style.display = "none";
+        if (currentCategoryId && categories[currentCategoryId]) {
+          $("room-title").textContent =
+            "# " + categories[currentCategoryId].name;
+          renderCategories();
+        } else if (!currentCategoryId) {
+          const firstId = Object.keys(categories)[0];
+          if (firstId) openCategory(firstId);
+        }
+      },
+      error => {
+        $("join-error").textContent =
+          "카테고리를 불러오지 못했습니다: " + error.message;
+        $("status").textContent = "연결 오류";
+      }
+    );
+
+    $("join").classList.add("hidden");
     $("message").disabled = false;
     $("send").disabled = false;
     $("status").textContent = "● 실시간 연결";
-    $("layout").classList.add("sidebar-closed");
   } catch (error) {
-    $("error").textContent = "연결 실패: " + error.message;
+    $("join-error").textContent =
+      "연결 실패: " + error.message;
+    $("status").textContent = "연결 실패";
     $("enter").disabled = false;
+    entering = false;
+  }
+}
+
+// 메뉴 열기 / 닫기
+$("menu-button").addEventListener("click", () => {
+  $("app").classList.toggle("sidebar-closed");
+});
+
+$("close-sidebar").addEventListener("click", () => {
+  $("app").classList.add("sidebar-closed");
+});
+
+// 카테고리 생성
+$("add-room").addEventListener("click", () => {
+  $("category-error").textContent = "";
+  $("category-name").value = "";
+  $("create-modal").classList.remove("hidden");
+  $("category-name").focus();
+});
+
+$("cancel-create").addEventListener("click", () => {
+  $("create-modal").classList.add("hidden");
+});
+
+$("confirm-create").addEventListener("click", createCategory);
+
+$("category-name").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    createCategory();
   }
 });
+
+$("create-modal").addEventListener("click", event => {
+  if (event.target === $("create-modal")) {
+    $("create-modal").classList.add("hidden");
+  }
+});
+
+// 입장
+$("enter").addEventListener("click", enterChat);
 
 $("nickname").addEventListener("keydown", event => {
   if (event.key === "Enter") {
     event.preventDefault();
-    $("enter").click();
+    enterChat();
   }
 });
 
-/* 메시지 전송 */
+// 메시지 전송
 $("form").addEventListener("submit", async event => {
   event.preventDefault();
 
-  const text = $("message").value.trim();
-  if (!text || !db || !nickname || !activeCategoryId) {
-    if (!activeCategoryId) toast("먼저 카테고리를 만들어 주세요.");
-    return;
-  }
+  const input = $("message");
+  const text = input.value.trim();
+
+  if (!text || !db || !nickname || !currentCategoryId) return;
 
   $("send").disabled = true;
 
   try {
-    await push(ref(db, `categoryMessages/${activeCategoryId}`), {
-      name: nickname,
-      text,
-      createdAt: serverTimestamp()
-    });
+    await push(
+      ref(db, "categoryMessages/" + currentCategoryId),
+      {
+        name: nickname,
+        text,
+        createdAt: serverTimestamp()
+      }
+    );
 
-    $("message").value = "";
-    $("message").focus();
-    hideMentionList();
+    input.value = "";
+    $("mention-list").style.display = "none";
+    input.focus();
   } catch (error) {
-    toast("메시지를 보내지 못했어요. Firebase 규칙을 확인해 주세요.");
+    alert(
+      "메시지를 보내지 못했습니다. Firebase 데이터베이스 규칙을 확인해 주세요."
+    );
     console.error(error);
   } finally {
     $("send").disabled = false;
   }
 });
 
-/* @닉네임 자동완성 */
+// @멘션 자동완성
 const mentionBox = $("mention-list");
 const messageBox = $("message");
 
-function hideMentionList() {
-  mentionBox.style.display = "none";
-  mentionBox.replaceChildren();
+function getChatNames() {
+  return [...new Set(
+    [...document.querySelectorAll("#messages .meta .name")]
+      .map(element => element.textContent.trim())
+      .filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b, "ko"));
 }
 
 messageBox.addEventListener("input", () => {
-  const match = messageBox.value.match(/(?:^|\s)@([^\s@]*)$/);
+  const match = messageBox.value.match(/@([^\s@]*)$/);
+  mentionBox.replaceChildren();
 
-  if (!match) {
-    hideMentionList();
+  if (!match || !currentCategoryId) {
+    mentionBox.style.display = "none";
     return;
   }
 
-  const keyword = match[1].toLocaleLowerCase("ko-KR");
-  const names = [...knownNames]
-    .filter(name => name !== "익명" &&
-      name.toLocaleLowerCase("ko-KR").includes(keyword))
-    .sort((a, b) => a.localeCompare(b, "ko-KR"));
+  const keyword = match[1].toLocaleLowerCase();
+  const names = getChatNames();
+  const matches = names.filter(name =>
+    name.toLocaleLowerCase().includes(keyword)
+  );
 
-  mentionBox.replaceChildren();
+  if (matches.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "mention-empty";
+    empty.textContent = names.length
+      ? "일치하는 친구가 없습니다."
+      : "친구가 이 채팅방에서 메시지를 보내면 표시됩니다.";
+    mentionBox.appendChild(empty);
+    mentionBox.style.display = "block";
+    return;
+  }
 
-  for (const name of names) {
-    const option = document.createElement("div");
-    option.className = "mention-option";
-    option.setAttribute("role", "option");
-    option.textContent = "@" + name;
+  for (const name of matches) {
+    const item = document.createElement("div");
+    item.className = "mention-option";
+    item.setAttribute("role", "option");
+    item.textContent = "@" + name;
 
-    option.addEventListener("mousedown", event => {
+    item.addEventListener("mousedown", event => {
       event.preventDefault();
-      messageBox.value = messageBox.value.replace(/@([^\s@]*)$/, "@" + name + " ");
-      hideMentionList();
+    });
+
+    item.addEventListener("click", () => {
+      messageBox.value = messageBox.value.replace(
+        /@([^\s@]*)$/,
+        "@" + name + " "
+      );
+      mentionBox.style.display = "none";
       messageBox.focus();
     });
 
-    mentionBox.append(option);
+    mentionBox.appendChild(item);
   }
 
-  mentionBox.style.display = names.length ? "block" : "none";
+  mentionBox.style.display = "block";
 });
 
 messageBox.addEventListener("keydown", event => {
-  if (event.key === "Escape") hideMentionList();
+  if (event.key === "Escape") {
+    mentionBox.style.display = "none";
+  }
+});
+
+document.addEventListener("click", event => {
+  if (
+    event.target !== messageBox &&
+    !mentionBox.contains(event.target)
+  ) {
+    mentionBox.style.display = "none";
+  }
 });
 </script>
 </body>
