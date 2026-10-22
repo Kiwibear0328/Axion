@@ -3,128 +3,271 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#050505">
-<title>Axion</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#7568ff">
+<title>Axion — 실시간 채팅</title>
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
-*{box-sizing:border-box}
-body{margin:0;background:#050505;color:#f5f5f5;font-family:Pretendard,sans-serif;transition:.3s}
-#particles{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
-.grid-bg{position:fixed;inset:0;pointer-events:none;background-size:40px 40px;background-image:linear-gradient(to right,#ffffff0a 1px,transparent 1px),linear-gradient(to bottom,#ffffff0a 1px,transparent 1px)}
-.page{position:relative;z-index:1;max-width:1000px;margin:auto;padding:22px 16px}
-header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}
-.brand{font-size:26px;font-weight:900;letter-spacing:-1px}
-.brand span{color:#60a5fa}
-.subtitle{font-size:13px;color:#888;margin-top:6px}
-.icon-button{width:42px;height:42px;border-radius:50%;border:1px solid #333;background:#171717;color:white;font-size:19px}
-.chat-box{height:min(740px,calc(100dvh - 140px));min-height:400px;display:flex;flex-direction:column;border:1px solid #292929;background:#101010df;backdrop-filter:blur(20px);border-radius:20px;overflow:hidden;box-shadow:0 25px 80px #0008}
-.chat-header{padding:17px 20px;border-bottom:1px solid #292929;display:flex;justify-content:space-between;align-items:center}
-.messages{flex:1;overflow-y:auto;padding:24px;scrollbar-width:thin}
-.chat-row{display:flex;align-items:flex-start;gap:11px;margin-bottom:22px}
-.avatar{width:39px;height:39px;flex-shrink:0;display:grid;place-items:center;border-radius:12px;font-weight:800}
-.message-content{min-width:0;flex:1}
-.message-meta{display:flex;align-items:center;gap:9px;margin-bottom:7px}
-.chat-name{font-size:13px;font-weight:800}
-.time{font-size:11px;color:#888}
-.bubble{display:inline-block;max-width:100%;padding:12px 15px;border:1px solid #303030;border-radius:4px 16px 16px 16px;background:#202020;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;font-size:14px}
-.mention{color:#bfdbfe;background:#2563eb40;border:1px solid #60a5fa80;border-radius:6px;padding:1px 5px;font-weight:750}
-.composer{display:flex;gap:10px;padding:14px;border-top:1px solid #292929}
-.input-wrap{position:relative;flex:1;min-width:0}
-input{width:100%;padding:14px;border:1px solid #333;border-radius:12px;background:#171717;color:white;outline:none;font:inherit;font-size:14px}
-input:focus{border-color:#3b82f6}
-button{cursor:pointer;font:inherit}
-.primary{border:0;background:#2563eb;color:white;border-radius:12px;padding:12px 20px;font-size:14px;font-weight:800}
-.primary:hover{background:#3b82f6}
-.primary:disabled{opacity:.45;cursor:not-allowed}
-#suggestions{display:none;position:absolute;bottom:calc(100% + 8px);left:0;right:0;max-height:180px;overflow:auto;padding:5px;border:1px solid #333;border-radius:12px;background:#111;z-index:10;box-shadow:0 15px 35px #0007}
-.suggestion{padding:11px;border-radius:8px;cursor:pointer;font-size:14px}
-.suggestion:hover{background:#2563eb55}
-.muted{color:#888}
-footer{text-align:center;margin-top:17px;font-size:10px;letter-spacing:3px;color:#666}
-#join{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;background:#000c;backdrop-filter:blur(12px)}
-.join-card{width:100%;max-width:380px;padding:28px;border:1px solid #333;background:#101010;border-radius:20px;box-shadow:0 25px 80px #0008}
-.join-card h2{font-size:26px;font-weight:900;margin:0}
-.join-card p{font-size:13px;line-height:1.7;color:#999;margin:12px 0 22px}
-.join-card label{display:block;font-size:12px;margin-bottom:8px}
-.join-card .primary{width:100%;margin-top:12px;padding:14px}
-.light-mode{background:#f4f6fa;color:#111827}
-.light-mode .grid-bg{background-image:linear-gradient(to right,#0000000b 1px,transparent 1px),linear-gradient(to bottom,#0000000b 1px,transparent 1px)}
-.light-mode .chat-box,.light-mode .join-card{background:#ffffffed;border-color:#d1d5db}
-.light-mode .chat-header,.light-mode .composer{border-color:#ddd}
-.light-mode input{background:#f3f4f6;color:#111827;border-color:#d1d5db}
-.light-mode .bubble{background:#f3f4f6;color:#111827;border-color:#d1d5db}
-.light-mode #suggestions{background:white;color:#111827;border-color:#ddd}
-.light-mode .suggestion:hover{background:#dbeafe}
-.light-mode .icon-button{background:white;color:#111827;border-color:#ddd}
-@media(max-width:600px){.page{padding:12px 9px}.brand{font-size:23px}.chat-box{height:calc(100dvh - 125px);min-height:0}.messages{padding:16px}.composer{padding:10px}.primary{padding:12px 15px}}
+:root {
+  --bg:#101117;
+  --panel:#191a23;
+  --bubble:#292b38;
+  --accent:#7568ff;
+  --text:#f5f5ff;
+  --muted:#9b9db0;
+  --border:#30313f;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+.app {
+  max-width:900px;
+  height:100dvh;
+  margin:auto;
+  display:flex;
+  flex-direction:column;
+  background:var(--panel);
+  border-left:1px solid var(--border);
+  border-right:1px solid var(--border);
+}
+header {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:17px;
+  background:#171820;
+  border-bottom:1px solid var(--border);
+}
+.logo {
+  width:45px;
+  height:45px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#9185ff,#5847e8);
+  font-size:25px;
+  font-weight:900;
+  box-shadow:0 4px 18px #7568ff40;
+}
+.brand { flex:1; }
+.brand h1 {
+  margin:0;
+  font-size:21px;
+  letter-spacing:.5px;
+}
+.brand p {
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:12px;
+}
+.online {
+  padding:7px 11px;
+  border:1px solid var(--border);
+  border-radius:20px;
+  font-size:11px;
+  color:#b7b0ff;
+}
+#notice {
+  display:none;
+  padding:10px 14px;
+  background:#49351f;
+  color:#ffe1a1;
+  font-size:13px;
+  overflow-wrap:anywhere;
+}
+#messages {
+  flex:1;
+  overflow-y:auto;
+  padding:18px 14px;
+  scroll-behavior:smooth;
+}
+.empty {
+  margin-top:25vh;
+  text-align:center;
+  color:var(--muted);
+  line-height:1.8;
+}
+.message {
+  display:flex;
+  align-items:flex-end;
+  gap:9px;
+  margin-bottom:17px;
+}
+.message.mine { flex-direction:row-reverse; }
+.avatar {
+  flex-shrink:0;
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#5146a5;
+  font-weight:700;
+}
+.mine .avatar { background:#326b60; }
+.body { max-width:78%; min-width:0; }
+.meta {
+  display:flex;
+  gap:8px;
+  margin:0 3px 5px;
+  color:var(--muted);
+  font-size:12px;
+}
+.mine .meta { justify-content:flex-end; }
+.bubble {
+  padding:11px 13px;
+  background:var(--bubble);
+  border-radius:15px 15px 15px 4px;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  line-height:1.5;
+  touch-action:pan-y;
+}
+.mine .bubble {
+  background:#5147a6;
+  border-radius:15px 15px 4px 15px;
+}
+.quote {
+  display:block;
+  padding:7px 9px;
+  margin-bottom:8px;
+  background:#14151d80;
+  border-left:3px solid #aaa1ff;
+  border-radius:5px;
+  color:#e0dcff;
+  font-size:12px;
+}
+.quote strong {
+  display:block;
+  margin-bottom:3px;
+}
+.composer {
+  padding:12px;
+  background:#171820;
+  border-top:1px solid var(--border);
+}
+#replyPreview {
+  display:none;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  margin-bottom:10px;
+  background:#292a38;
+  border-left:3px solid var(--accent);
+  border-radius:8px;
+}
+#replyPreview.show { display:flex; }
+.reply-info { flex:1; min-width:0; }
+#replyName {
+  font-size:12px;
+  font-weight:700;
+  color:#bdb5ff;
+}
+#replyText {
+  margin-top:3px;
+  font-size:12px;
+  color:var(--muted);
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+#cancelReply {
+  border:0;
+  background:none;
+  color:var(--muted);
+  font-size:24px;
+}
+form { display:flex; gap:8px; }
+input {
+  min-width:0;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:#242530;
+  color:white;
+  outline:none;
+  font:inherit;
+}
+input:focus { border-color:var(--accent); }
+#name { width:120px; }
+#message { flex:1; }
+#send {
+  padding:0 18px;
+  border:0;
+  border-radius:11px;
+  background:var(--accent);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+}
+#send:disabled { opacity:.5; cursor:not-allowed; }
+.hint {
+  margin:9px 3px 0;
+  color:var(--muted);
+  font-size:11px;
+}
+@media(max-width:520px) {
+  header { padding:13px; }
+  .online { display:none; }
+  #messages { padding:14px 9px; }
+  form { flex-wrap:wrap; }
+  #name { width:100%; }
+  #message { flex:1; }
+  #send { min-height:44px; }
+  .body { max-width:84%; }
+}
 </style>
 </head>
 <body>
-<canvas id="particles"></canvas>
-<div class="grid-bg"></div>
-
-<div class="page">
+<div class="app">
   <header>
-    <div>
-      <div class="brand">A<span>xion</span></div>
-      <div class="subtitle">Your space. Your people.</div>
+    <div class="logo">A</div>
+    <div class="brand">
+      <h1>Axion</h1>
+      <p>Connect. Chat. Together.</p>
     </div>
-    <button id="theme" class="icon-button" type="button" aria-label="테마 변경">☼</button>
+    <div class="online" id="status">연결 중...</div>
   </header>
 
-  <main class="chat-box">
-    <div class="chat-header">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#2563eb30;color:#93c5fd;font-size:21px">✉</div>
-        <div>
-          <div style="font-weight:800">Axion Chat</div>
-          <div class="muted" style="font-size:12px;margin-top:4px">친구들과 실시간으로 연결</div>
-        </div>
-      </div>
-      <div id="status" style="font-size:11px;color:#34d399">● 연결 대기</div>
-    </div>
+  <div id="notice"></div>
 
-    <section id="messages" class="messages" aria-live="polite">
-      <div id="empty" class="muted" style="text-align:center;padding:30px 0;font-size:14px">
-        Axion에 오신 것을 환영합니다.
-      </div>
-    </section>
-
-    <form id="chat-form" class="composer">
-      <div class="input-wrap">
-        <input id="message" maxlength="1000" autocomplete="off" disabled
-          placeholder="메시지 입력... (@로 친구 멘션)">
-        <div id="suggestions"></div>
-      </div>
-      <button id="send" class="primary" disabled type="submit">전송</button>
-    </form>
+  <main id="messages">
+    <div class="empty">Axion에 오신 것을 환영합니다.<br>메시지를 불러오는 중...</div>
   </main>
 
-  <footer>AXION · PRIVATE GROUP CHAT</footer>
-</div>
+  <section class="composer">
+    <div id="replyPreview">
+      <div class="reply-info">
+        <div id="replyName">답장</div>
+        <div id="replyText"></div>
+      </div>
+      <button id="cancelReply" type="button" aria-label="답장 취소">×</button>
+    </div>
 
-<div id="join">
-  <form id="join-form" class="join-card">
-    <div style="font-size:11px;letter-spacing:4px;color:#93c5fd;margin-bottom:12px">WELCOME TO AXION</div>
-    <h2>다시 연결되다.</h2>
-    <p>닉네임을 입력하고 친구들과 대화를 시작하세요.</p>
-    <label for="nickname">닉네임</label>
-    <input id="nickname" maxlength="20" autocomplete="nickname" placeholder="닉네임 입력">
-    <button id="enter" class="primary" type="submit">Axion 입장하기</button>
-    <div id="error" style="font-size:12px;color:#fca5a5;line-height:1.6;margin-top:10px"></div>
-  </form>
+    <form id="form">
+      <input id="name" maxlength="24" placeholder="닉네임" required>
+      <input id="message" maxlength="1500" placeholder="Axion에 메시지 보내기..." required>
+      <button id="send" type="submit" disabled>전송</button>
+    </form>
+
+    <div class="hint">
+      모바일: 메시지를 왼쪽으로 밀어 답장 · PC: 마우스 오른쪽 클릭
+    </div>
+  </section>
 </div>
 
 <script type="module">
-import {initializeApp,getApps} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
-  getDatabase,ref,push,query,limitToLast,
-  onChildAdded,serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+  getDatabase, ref, push, set, query,
+  orderByChild, limitToLast, onChildAdded,
+  onValue, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAf-nM5PJRUo2q7TvX2LeZNKxh8A021bck",
@@ -137,231 +280,205 @@ const firebaseConfig = {
 };
 
 const $ = id => document.getElementById(id);
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const db = getDatabase(app);
-let nickname = "";
+const messages = $("messages");
+const nameInput = $("name");
+const messageInput = $("message");
+const sendButton = $("send");
 
-const colors = ["#60a5fa","#c084fc","#f472b6","#34d399","#fbbf24","#fb7185"];
+nameInput.value = localStorage.getItem("axionName") || "";
 
-function hash(value){
-  let h=0;
-  for(const c of value) h=(h*31+c.charCodeAt(0))|0;
-  return h;
+let replyTo = null;
+const rendered = new Set();
+
+function showNotice(text) {
+  $("notice").textContent = text;
+  $("notice").style.display = "block";
 }
 
-function addHighlightedText(element,text){
-  text.split(/(@[^\s@]+)/g).forEach(part=>{
-    if(part.startsWith("@")&&part.length>1){
-      const span=document.createElement("span");
-      span.className="mention";
-      span.textContent=part;
-      element.appendChild(span);
-    }else{
-      element.appendChild(document.createTextNode(part));
-    }
+function startReply(message) {
+  replyTo = {
+    id: message.id,
+    name: message.name,
+    text: message.text
+  };
+  $("replyName").textContent = message.name + "님에게 답장";
+  $("replyText").textContent = message.text;
+  $("replyPreview").classList.add("show");
+  messageInput.focus();
+}
+
+function cancelReply() {
+  replyTo = null;
+  $("replyPreview").classList.remove("show");
+}
+$("cancelReply").addEventListener("click", cancelReply);
+
+function addText(parent, tag, text, className = "") {
+  const element = document.createElement(tag);
+  element.textContent = text;
+  if (className) element.className = className;
+  parent.appendChild(element);
+  return element;
+}
+
+function formatTime(timestamp) {
+  if (!timestamp) return "";
+  return new Date(timestamp).toLocaleTimeString("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit"
   });
 }
 
-function renderMessage(data){
-  $("empty")?.remove();
+function renderMessage(id, data) {
+  if (rendered.has(id)) return;
+  rendered.add(id);
 
-  const row=document.createElement("div");
-  row.className="chat-row";
+  const empty = messages.querySelector(".empty");
+  if (empty) empty.remove();
 
-  const avatar=document.createElement("div");
-  const color=colors[Math.abs(hash(data.name||"?"))%colors.length];
-  avatar.className="avatar";
-  avatar.style.cssText=`background:${color}25;color:${color};border:1px solid ${color}66`;
-  avatar.textContent=(data.name||"?").slice(0,1);
+  const item = {
+    id,
+    name: data.name || "익명",
+    text: data.text || ""
+  };
 
-  const content=document.createElement("div");
-  content.className="message-content";
+  const row = document.createElement("article");
+  row.className = "message";
+  if (item.name === nameInput.value.trim()) {
+    row.classList.add("mine");
+  }
 
-  const meta=document.createElement("div");
-  meta.className="message-meta";
+  addText(row, "div", item.name.slice(0, 1), "avatar");
 
-  const name=document.createElement("span");
-  name.className="chat-name";
-  name.textContent=data.name||"익명";
+  const body = document.createElement("div");
+  body.className = "body";
 
-  const time=document.createElement("span");
-  time.className="time";
-  time.textContent=data.createdAt
-    ? new Date(data.createdAt).toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"})
-    : "방금";
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  addText(meta, "span", item.name);
+  addText(meta, "span", formatTime(data.createdAt));
+  body.appendChild(meta);
 
-  const bubble=document.createElement("div");
-  bubble.className="bubble";
-  addHighlightedText(bubble,data.text||"");
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
 
-  meta.append(name,time);
-  content.append(meta,bubble);
-  row.append(avatar,content);
-  $("messages").append(row);
-  $("messages").scrollTop=$("messages").scrollHeight;
+  if (data.replyTo && data.replyTo.text) {
+    const quote = document.createElement("div");
+    quote.className = "quote";
+    addText(quote, "strong", data.replyTo.name + "에게 답장");
+    addText(quote, "span", data.replyTo.text);
+    bubble.appendChild(quote);
+  }
+
+  addText(bubble, "span", item.text);
+  body.appendChild(bubble);
+  row.appendChild(body);
+  messages.appendChild(row);
+
+  // PC: 오른쪽 클릭으로 답장
+  row.addEventListener("contextmenu", event => {
+    event.preventDefault();
+    startReply(item);
+  });
+
+  // 모바일: 왼쪽으로 밀어서 답장
+  let startX = 0;
+  let startY = 0;
+
+  bubble.addEventListener("touchstart", event => {
+    if (event.touches.length !== 1) return;
+    startX = event.touches[0].clientX;
+    startY = event.touches[0].clientY;
+  }, { passive: true });
+
+  bubble.addEventListener("touchend", event => {
+    if (!event.changedTouches.length) return;
+
+    const dx = event.changedTouches[0].clientX - startX;
+    const dy = event.changedTouches[0].clientY - startY;
+
+    if (dx < -55 && Math.abs(dx) > Math.abs(dy) * 1.25) {
+      startReply(item);
+    }
+  }, { passive: true });
+
+  // PC: 왼쪽 드래그로 답장
+  let mouseStart = null;
+
+  bubble.addEventListener("pointerdown", event => {
+    if (event.pointerType === "mouse" && event.button === 0) {
+      mouseStart = event.clientX;
+    }
+  });
+
+  bubble.addEventListener("pointerup", event => {
+    if (mouseStart === null) return;
+    const dx = event.clientX - mouseStart;
+    mouseStart = null;
+    if (dx < -65) startReply(item);
+  });
+
+  messages.scrollTop = messages.scrollHeight;
 }
 
-$("join-form").addEventListener("submit",e=>{
-  e.preventDefault();
-  nickname=$("nickname").value.trim();
+try {
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-  if(!nickname){
-    $("error").textContent="닉네임을 입력해 주세요.";
-    return;
-  }
-
-  $("enter").disabled=true;
-  $("error").textContent="";
-  $("status").textContent="● 연결 중";
-
-  onChildAdded(
-    query(ref(db,"messages"),limitToLast(100)),
-    snapshot=>{
-      if(snapshot.exists()) renderMessage(snapshot.val());
-    },
-    error=>{
-      $("error").textContent="연결 오류: "+error.message;
-      $("enter").disabled=false;
-    }
+  const messageQuery = query(
+    ref(db, "messages"),
+    orderByChild("createdAt"),
+    limitToLast(200)
   );
 
-  $("join").style.display="none";
-  $("message").disabled=false;
-  $("send").disabled=false;
-  $("message").focus();
-  $("status").textContent="● 실시간 연결";
-});
+  onValue(ref(db, ".info/connected"), snapshot => {
+    const connected = snapshot.val() === true;
+    $("status").textContent = connected ? "실시간 연결됨" : "연결 중...";
+    sendButton.disabled = !connected;
+  });
 
-$("chat-form").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const input=$("message");
-  const text=input.value.trim();
-  if(!text||!nickname)return;
+  onChildAdded(messageQuery, snapshot => {
+    renderMessage(snapshot.key, snapshot.val() || {});
+  }, error => {
+    showNotice("메시지를 불러오지 못했습니다: " + error.message);
+  });
 
-  $("send").disabled=true;
-  try{
-    await push(ref(db,"messages"),{
-      name:nickname,
-      text,
-      createdAt:serverTimestamp()
-    });
-    input.value="";
-    $("suggestions").style.display="none";
-  }catch(error){
-    alert("메시지를 보내지 못했습니다. Firebase 데이터베이스 규칙을 확인해 주세요.");
-  }finally{
-    $("send").disabled=false;
-    input.focus();
-  }
-});
+  $("form").addEventListener("submit", async event => {
+    event.preventDefault();
 
-// @닉네임 자동완성
-const messageInput=$("message");
-const suggestionBox=$("suggestions");
+    const name = nameInput.value.trim().slice(0, 24);
+    const text = messageInput.value.trim();
 
-messageInput.addEventListener("input",()=>{
-  const match=messageInput.value.match(/@([^\s@]*)$/);
-  suggestionBox.replaceChildren();
+    if (!name || !text || sendButton.disabled) return;
 
-  if(!match){
-    suggestionBox.style.display="none";
-    return;
-  }
+    nameInput.value = name;
+    localStorage.setItem("axionName", name);
+    sendButton.disabled = true;
 
-  const keyword=match[1].toLowerCase();
-  const names=[...new Set(
-    [...document.querySelectorAll(".chat-name")]
-      .map(el=>el.textContent.trim())
-      .filter(Boolean)
-  )];
+    try {
+      const newMessage = push(ref(db, "messages"));
 
-  const results=names.filter(name=>name.toLowerCase().includes(keyword));
+      await set(newMessage, {
+        name,
+        text,
+        createdAt: serverTimestamp(),
+        replyTo: replyTo ? { ...replyTo } : null
+      });
 
-  if(!results.length){
-    const hint=document.createElement("div");
-    hint.className="suggestion muted";
-    hint.textContent=names.length
-      ?"일치하는 닉네임이 없습니다."
-      :"친구가 먼저 메시지를 보내면 닉네임이 표시됩니다.";
-    suggestionBox.append(hint);
-  }
-
-  results.forEach(name=>{
-    const option=document.createElement("div");
-    option.className="suggestion";
-    option.textContent="@"+name;
-    option.addEventListener("mousedown",e=>e.preventDefault());
-    option.addEventListener("click",()=>{
-      messageInput.value=messageInput.value.replace(/@([^\s@]*)$/,"@"+name+" ");
-      suggestionBox.style.display="none";
+      messageInput.value = "";
+      cancelReply();
       messageInput.focus();
-    });
-    suggestionBox.append(option);
+    } catch (error) {
+      showNotice("전송 실패: " + error.message);
+    } finally {
+      sendButton.disabled = false;
+    }
   });
 
-  suggestionBox.style.display="block";
-});
-
-messageInput.addEventListener("keydown",e=>{
-  if(e.key==="Escape") suggestionBox.style.display="none";
-});
-
-document.addEventListener("click",e=>{
-  if(e.target!==messageInput&&!suggestionBox.contains(e.target)){
-    suggestionBox.style.display="none";
-  }
-});
-
-// 테마 변경
-$("theme").addEventListener("click",()=>{
-  const light=document.body.classList.toggle("light-mode");
-  $("theme").textContent=light?"☾":"☼";
-});
-
-// 움직이는 입자 배경
-const canvas=$("particles");
-const ctx=canvas.getContext("2d");
-let particles=[];
-
-function resizeCanvas(){
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
-  particles=Array.from(
-    {length:Math.min(85,Math.floor(window.innerWidth/14))},
-    ()=>({
-      x:Math.random()*canvas.width,
-      y:Math.random()*canvas.height,
-      vx:(Math.random()-.5)*.35,
-      vy:(Math.random()-.5)*.35,
-      radius:Math.random()*1.5+.5,
-      alpha:Math.random()*.35+.1
-    })
-  );
+} catch (error) {
+  $("status").textContent = "연결 오류";
+  showNotice("Firebase 설정을 확인하세요: " + error.message);
 }
-
-function animate(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(const p of particles){
-    p.x+=p.vx;
-    p.y+=p.vy;
-    if(p.x<0)p.x=canvas.width;
-    if(p.x>canvas.width)p.x=0;
-    if(p.y<0)p.y=canvas.height;
-    if(p.y>canvas.height)p.y=0;
-
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
-    ctx.fillStyle=document.body.classList.contains("light-mode")
-      ?`rgba(0,0,0,${p.alpha*.4})`
-      :`rgba(255,255,255,${p.alpha})`;
-    ctx.fill();
-  }
-  requestAnimationFrame(animate);
-}
-
-window.addEventListener("resize",resizeCanvas);
-resizeCanvas();
-animate();
 </script>
 </body>
 </html>
