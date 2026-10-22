@@ -1,78 +1,73 @@
-
 <!DOCTYPE html>
-<html lang="ko" class="dark">
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Axion Chat</title>
+<title>Axion — 실시간 채팅</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
 <style>
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
 :root {
-  font-family: Pretendard, system-ui, sans-serif;
-  --accent: #8257f5;
-  --pink: #ed83d0;
-  --line: rgba(133, 115, 205, .19);
+  --bg: #f4f3fb;
+  --panel: #ffffff;
+  --text: #25243a;
+  --muted: #85849b;
+  --line: #e9e7f3;
+  --accent: #7657ed;
+  --accent2: #e66cb8;
+  --bubble: #f0edff;
 }
 
-* { box-sizing: border-box; }
+[data-theme="dark"] {
+  --bg: #141326;
+  --panel: #201e38;
+  --text: #f3f1ff;
+  --muted: #aaa6c5;
+  --line: #37334f;
+  --accent: #a28bff;
+  --accent2: #ed8bc9;
+  --bubble: #302b50;
+}
+
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
-  height: 100dvh;
-  overflow: hidden;
-  font-family: Pretendard, system-ui, sans-serif;
-  transition: background .3s, color .3s;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, "Malgun Gothic", sans-serif;
 }
 
-body.dark {
-  color: #f4f0ff;
-  background:
-    radial-gradient(ellipse at 0% 0%, #39203d 0%, transparent 38%),
-    radial-gradient(ellipse at 100% 100%, #17264c 0%, transparent 40%),
-    #171627;
+button, input {
+  font: inherit;
 }
 
-body.light {
-  color: #292641;
-  background:
-    radial-gradient(ellipse at 0% 0%, #ffdeef 0%, transparent 42%),
-    radial-gradient(ellipse at 100% 0%, #dce8ff 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 100%, #e6d8ff 0%, transparent 40%),
-    #f9f8ff;
+button {
+  cursor: pointer;
+  border: none;
 }
 
-#app {
-  width: 100%;
-  height: 100%;
-  display: flex;
+.app {
+  max-width: 1300px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 22px;
+  display: grid;
+  grid-template-columns: 270px 1fr;
   gap: 18px;
-  padding: 14px 2%;
 }
 
 .sidebar, .chat {
+  background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 28px;
-  overflow: hidden;
-  min-height: 0;
-  backdrop-filter: blur(24px);
-}
-
-.dark .sidebar, .dark .chat {
-  background: rgba(28, 26, 45, .94);
-}
-
-.light .sidebar, .light .chat {
-  background: rgba(255, 255, 255, .88);
-  box-shadow: 0 15px 50px rgba(116, 95, 190, .08);
+  border-radius: 24px;
+  min-height: calc(100vh - 44px);
 }
 
 .sidebar {
-  width: 298px;
-  flex: 0 0 298px;
-  padding: 28px 18px 18px;
+  padding: 20px 16px;
   display: flex;
   flex-direction: column;
 }
@@ -80,541 +75,554 @@ body.light {
 .brand {
   display: flex;
   align-items: center;
-  gap: 13px;
-  padding: 0 8px;
+  gap: 11px;
+  padding: 5px 7px 25px;
 }
 
-.brand-logo, .avatar, .channel-icon, .send {
-  background: linear-gradient(135deg, #7961ff, #ed83d0);
-  color: white;
-}
-
-.brand-logo {
-  width: 49px;
-  height: 49px;
-  border-radius: 17px;
+.logo {
+  width: 43px;
+  height: 43px;
+  border-radius: 15px;
   display: grid;
   place-items: center;
-  font-size: 25px;
-  font-weight: 900;
-  box-shadow: 0 8px 24px #9063e833;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  font-weight: bold;
+  font-size: 22px;
 }
 
-.brand-name { font-size: 26px; font-weight: 850; letter-spacing: -.8px; }
-.brand-sub { color: #9994b6; font-size: 11px; margin-top: 4px; }
+.brand h1 {
+  margin: 0;
+  font-size: 23px;
+}
 
-.side-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 36px 8px 15px;
+.sub {
   font-size: 12px;
-  letter-spacing: 1.3px;
-  color: #9994b6;
-  font-weight: 850;
+  color: var(--muted);
 }
 
-.icon-btn {
-  border: 0;
-  cursor: pointer;
-  border-radius: 13px;
+.section-label {
   padding: 10px;
-  color: #8566f7;
-  background: rgba(133, 102, 247, .12);
-  font-size: 19px;
-  font-weight: 700;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.3px;
 }
 
-.channels { display: flex; flex-direction: column; gap: 7px; }
+.channel-list {
+  display: grid;
+  gap: 6px;
+}
 
 .channel {
-  width: 100%;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 11px;
-  border: 0;
-  border-radius: 17px;
+  padding: 11px 12px;
+  border-radius: 12px;
   text-align: left;
-  cursor: pointer;
-  color: inherit;
   background: transparent;
-  font: inherit;
+  color: var(--muted);
 }
 
+.channel:hover,
 .channel.active {
-  background: linear-gradient(110deg, rgba(126, 92, 245, .16), rgba(236, 123, 207, .12));
-  color: #8760f5;
+  background: var(--bubble);
+  color: var(--accent);
 }
 
-.dark .channel.active {
-  background: linear-gradient(110deg, rgba(126, 92, 245, .22), rgba(236, 123, 207, .16));
-  color: #c4a8ff;
+.side-bottom {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
 }
-
-.channel-icon {
-  flex: 0 0 39px;
-  height: 39px;
-  border-radius: 13px;
-  display: grid;
-  place-items: center;
-  font-size: 18px;
-  background: rgba(135, 100, 245, .12);
-  color: #8760f5;
-}
-
-.channel-name { font-weight: 750; flex: 1; }
-.channel-dot { color: #b5b3cc; font-size: 12px; }
 
 .profile {
-  margin-top: auto;
-  padding: 15px 8px 0;
-  border-top: 1px solid var(--line);
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 10px;
+  padding: 8px 0;
 }
 
 .avatar {
-  width: 43px;
-  height: 43px;
-  flex: 0 0 43px;
+  width: 37px;
+  height: 37px;
+  flex-shrink: 0;
+  border-radius: 50%;
   display: grid;
   place-items: center;
-  border-radius: 15px;
-  font-size: 18px;
-  font-weight: 800;
+  color: white;
+  font-weight: bold;
+  background: linear-gradient(135deg, #b9a7ff, #f1a4d4);
 }
 
-.profile-info { flex: 1; min-width: 0; }
-.profile-name { font-weight: 800; font-size: 14px; overflow-wrap: anywhere; }
-.online { color: #36bb93; font-size: 12px; margin-top: 4px; }
+.profile-actions {
+  display: flex;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.icon-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 11px;
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.icon-btn:hover {
+  color: var(--accent);
+}
+
+.small-btn {
+  background: var(--bubble);
+  color: var(--accent);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font-size: 12px;
+  font-weight: bold;
+}
 
 .chat {
-  flex: 1;
-  min-width: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-.chat-head {
-  min-height: 91px;
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
+.topbar {
+  padding: 20px 25px;
   border-bottom: 1px solid var(--line);
-}
-
-.chat-title {
   display: flex;
   align-items: center;
-  gap: 13px;
-  min-width: 0;
+  gap: 12px;
 }
 
-.chat-title h2 { margin: 0; font-size: 20px; font-weight: 850; }
-.chat-title p { margin: 5px 0 0; font-size: 13px; color: #9994b6; }
-
-.head-actions { display: flex; align-items: center; gap: 10px; }
+.topbar h2 {
+  margin: 0;
+  font-size: 19px;
+}
 
 .live {
-  border-radius: 99px;
-  background: #e8fff5;
-  color: #23b58a;
+  margin-left: auto;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: #22c55e18;
+  color: #16a34a;
   font-size: 12px;
-  font-weight: 800;
-  padding: 10px 14px;
-  white-space: nowrap;
+  font-weight: bold;
 }
 
 .messages {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 24px 28px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 17px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 250px;
 }
 
-.day-divider {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  font-size: 12px;
-  color: #9994b6;
-  margin: 8px 0 4px;
+.empty {
+  margin: auto;
+  text-align: center;
+  color: var(--muted);
+  padding: 40px 10px;
 }
 
-.day-divider::before, .day-divider::after {
-  content: "";
-  width: 60px;
-  height: 1px;
-  background: var(--line);
-}
-
-.msg {
+.message {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  max-width: 100%;
-  animation: appear .18s ease-out;
+  max-width: 90%;
 }
 
-@keyframes appear {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+.message.mine {
+  align-self: flex-end;
+  flex-direction: row-reverse;
 }
 
-.msg-main { min-width: 0; max-width: min(700px, 90%); }
-.meta { display: flex; gap: 9px; align-items: center; margin: 2px 0 7px; font-size: 12px; }
-.meta .name { font-weight: 800; }
-.time { color: #9994b6; }
+.message .avatar {
+  width: 34px;
+  height: 34px;
+  font-size: 12px;
+}
+
+.msgbody {
+  min-width: 0;
+}
+
+.msgmeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.message.mine .msgmeta {
+  justify-content: flex-end;
+}
+
+.msgname {
+  font-weight: bold;
+  color: var(--text);
+}
 
 .bubble {
-  display: inline-block;
-  max-width: 100%;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  padding: 12px 15px;
-  line-height: 1.55;
-  border-radius: 5px 16px 16px 16px;
-  font-size: 14px;
-}
-
-.dark .bubble { background: #302d49; }
-.light .bubble { background: #f1effb; }
-
-.reply-preview {
-  border-left: 3px solid #9878ff;
-  padding: 7px 10px;
-  margin-bottom: 6px;
-  border-radius: 5px;
-  background: rgba(135, 100, 245, .10);
-  font-size: 12px;
-  color: #9994b6;
-  cursor: pointer;
-}
-
-.mention {
-  color: #9471ff;
-  font-weight: 850;
-}
-
-.msg-tools {
-  display: flex;
-  gap: 6px;
-  margin-top: 5px;
-  flex-wrap: wrap;
-}
-
-.tool-btn {
-  font-family: inherit;
-  font-size: 11px;
+  padding: 11px 14px;
   border: 1px solid var(--line);
-  color: #9477ed;
-  background: transparent;
-  padding: 5px 9px;
-  border-radius: 8px;
-  cursor: pointer;
+  background: var(--bg);
+  border-radius: 5px 17px 17px 17px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
-.tool-btn:hover { background: rgba(135, 100, 245, .12); }
-.tool-btn.danger { color: #ef7777; }
+.message.mine .bubble {
+  background: linear-gradient(135deg, var(--accent), #9278f3);
+  color: white;
+  border: none;
+  border-radius: 17px 5px 17px 17px;
+}
+
+.replyquote {
+  border-left: 3px solid var(--accent2);
+  background: #8c73ed12;
+  border-radius: 7px;
+  padding: 7px 10px;
+  margin-bottom: 7px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.tools {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.tools button {
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 3px 6px;
+}
+
+.tools button:hover {
+  color: var(--accent);
+}
 
 .composer-wrap {
   border-top: 1px solid var(--line);
-  padding: 14px 22px 18px;
+  padding: 18px 22px 22px;
 }
 
-.replying {
+.reply-preview {
   display: none;
-  padding: 9px 12px;
-  margin-bottom: 9px;
+  background: var(--bubble);
   border-radius: 10px;
-  background: rgba(135, 100, 245, .10);
+  padding: 8px 12px;
+  margin-bottom: 9px;
   font-size: 12px;
-  color: #9477ed;
-  align-items: center;
-  gap: 8px;
 }
 
-.replying span { flex: 1; }
-.replying button { border: 0; background: transparent; color: inherit; cursor: pointer; }
-
-.composer {
-  min-height: 72px;
+.reply-preview.show {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 11px 9px 16px;
-  border: 1px solid rgba(142, 120, 216, .42);
-  border-radius: 22px;
-  transition: box-shadow .2s, border-color .2s;
 }
 
-.composer:focus-within {
-  border-color: #9b7cff;
-  box-shadow: 0 0 0 3px rgba(135, 100, 245, .09);
+.reply-preview span {
+  flex: 1;
 }
 
-.light .composer { background: rgba(255,255,255,.65); }
-.dark .composer { background: rgba(38, 35, 58, .7); }
+.compose {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  padding: 9px;
+}
 
-#message {
+.compose input {
   flex: 1;
   min-width: 0;
+  border: none;
+  outline: none;
   background: transparent;
-  color: inherit;
-  border: 0;
-  outline: 0;
-  font: inherit;
-  font-size: 14px;
+  color: var(--text);
+  padding: 10px 4px;
 }
 
-#message::placeholder { color: #aaa6c6; }
-
-.send {
-  width: 48px;
-  height: 48px;
-  flex: 0 0 48px;
-  border: 0;
-  border-radius: 16px;
-  font-size: 21px;
-  cursor: pointer;
-  box-shadow: 0 5px 16px rgba(143, 93, 240, .25);
+.send, .primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  border-radius: 12px;
+  padding: 11px 17px;
+  font-weight: bold;
 }
 
-.send:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.footer-hint { display: flex; justify-content: space-between; padding: 12px 5px 0; color: #a29dbf; font-size: 11px; }
+.hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 9px 5px 0;
+}
 
-.modal {
+.modal-back {
   position: fixed;
   inset: 0;
-  z-index: 50;
-  background: rgba(8, 7, 20, .65);
-  backdrop-filter: blur(10px);
-  display: none;
-  place-items: center;
-  padding: 20px;
-}
-
-.modal-box {
-  width: min(410px, 100%);
-  padding: 25px;
-  border: 1px solid var(--line);
-  border-radius: 23px;
-  background: #211f35;
-  color: #f4f0ff;
-  box-shadow: 0 25px 100px #0004;
-}
-
-.modal-box h3 { margin: 0 0 9px; font-size: 21px; }
-.modal-box p { color: #aaa5c5; font-size: 13px; line-height: 1.6; }
-.modal-box input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #403b5d;
-  border-radius: 11px;
-  background: #171629;
-  color: white;
-  margin: 6px 0;
-  font: inherit;
-  outline: none;
-}
-
-.modal-box input:focus { border-color: #9878ff; }
-.modal-actions { display: flex; gap: 8px; margin-top: 12px; }
-.modal-actions button {
-  flex: 1;
-  padding: 11px;
-  border: 0;
-  border-radius: 10px;
-  cursor: pointer;
-  font: inherit;
-  font-weight: 750;
-}
-.primary { color: white; background: linear-gradient(120deg, #7961ff, #e77dce); }
-.secondary { color: #ded8fa; background: #393550; }
-.error { color: #ff9999; font-size: 12px; margin-top: 9px; white-space: pre-wrap; }
-
-#mention-list {
-  position: absolute;
-  display: none;
-  left: 25px;
-  bottom: 100%;
-  width: min(300px, 80%);
-  max-height: 190px;
-  overflow: auto;
-  background: #29263f;
-  border: 1px solid #51476f;
-  border-radius: 12px;
-  padding: 5px;
   z-index: 10;
+  background: #100d26a8;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
 }
-.mention-option { padding: 10px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-.mention-option:hover { background: #40365e; }
 
-.mobile-back { display: none; }
+.modal-back.open {
+  display: flex;
+}
 
-@media(max-width:760px) {
-  #app { padding: 0; gap: 0; }
-  .sidebar { width: 78px; flex-basis: 78px; padding: 17px 9px; border-radius: 0; }
-  .brand { justify-content: center; padding: 0; }
-  .brand-logo { width: 47px; height: 47px; }
-  .brand-copy, .side-label span:first-child, .channel-name, .channel-dot, .profile-info, .profile .icon-btn { display: none; }
-  .side-label { justify-content: center; margin: 25px 0 12px; }
-  .channel { justify-content: center; padding: 8px 0; }
-  .channel-icon { flex-basis: 45px; height: 45px; }
-  .profile { justify-content: center; padding: 13px 0 0; }
-  .profile .avatar { width: 42px; }
-  .chat { border-radius: 0; }
-  .chat-head { padding: 15px; min-height: 76px; }
-  .chat-title h2 { font-size: 17px; }
-  .chat-title p { font-size: 11px; }
-  .messages { padding: 17px 12px; }
-  .composer-wrap { padding: 10px; }
-  .composer { min-height: 60px; border-radius: 18px; }
-  .send { width: 43px; height: 43px; flex-basis: 43px; }
-  .footer-hint { font-size: 10px; }
-  .live { padding: 8px 9px; font-size: 10px; }
-  #theme-toggle { padding: 8px; }
-  .head-actions { gap: 6px; }
+.modal {
+  background: var(--panel);
+  color: var(--text);
+  width: min(420px, 100%);
+  border-radius: 22px;
+  padding: 25px;
+  box-shadow: 0 25px 90px #0004;
+}
+
+.modal h3 {
+  margin: 0 0 7px;
+  font-size: 21px;
+}
+
+.modal p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.field {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  padding: 12px;
+  margin: 6px 0 12px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.secondary {
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 11px;
+  padding: 11px 15px;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 12px;
+  min-height: 17px;
+}
+
+.admin-badge {
+  display: none;
+  font-size: 10px;
+  background: #f59e0b20;
+  color: #d97706;
+  border-radius: 8px;
+  padding: 3px 6px;
+  font-weight: bold;
+}
+
+body.admin .admin-badge {
+  display: inline-block;
+}
+
+.admin-status {
+  display: none;
+  color: #16a34a;
+  font-size: 11px;
+  padding: 0 8px 8px;
+}
+
+body.admin .admin-status {
+  display: block;
+}
+
+@media (max-width: 760px) {
+  .app {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .sidebar {
+    min-height: auto;
+  }
+
+  .chat {
+    min-height: calc(100vh - 145px);
+  }
+
+  .topbar {
+    padding: 15px;
+  }
+
+  .messages {
+    padding: 16px;
+  }
+
+  .composer-wrap {
+    padding: 12px;
+  }
+
+  .message {
+    max-width: 98%;
+  }
 }
 </style>
 </head>
 
-<body class="dark">
-<div id="app">
+<body>
+<div class="app">
+
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-logo">A</div>
-      <div class="brand-copy">
-        <div class="brand-name">Axion</div>
-        <div class="brand-sub">YOUR SPACE, YOUR PEOPLE</div>
+      <div class="logo">A</div>
+      <div>
+        <h1>Axion</h1>
+        <div class="sub">Your space to connect</div>
       </div>
     </div>
 
-    <div class="side-label">
-      <span>CHANNELS</span>
-      <button class="icon-btn" id="add-channel" title="채널 추가">+</button>
-    </div>
+    <div class="section-label">CHANNELS</div>
+    <div class="channel-list" id="channels"></div>
 
-    <div class="channels" id="channels">
-      <button class="channel active" data-channel="general">
-        <span class="channel-icon">✦</span>
-        <span class="channel-name">잡담</span>
-        <span class="channel-dot">●</span>
+    <button class="small-btn" id="addChannel" style="margin-top:12px">
+      ＋ 채널 추가
+    </button>
+
+    <div class="side-bottom">
+      <div class="profile">
+        <div class="avatar" id="profileAvatar">G</div>
+
+        <div>
+          <div id="profileName">Guest</div>
+          <div class="sub" id="profileRole">온라인</div>
+        </div>
+
+        <div class="profile-actions">
+          <button class="icon-btn" id="themeBtn" title="테마 변경">☾</button>
+          <button class="icon-btn" id="adminBtn" title="관리자 로그인">⚙</button>
+        </div>
+      </div>
+
+      <div class="admin-status">관리자 모드 활성화됨</div>
+
+      <button class="small-btn" id="nameBtn" style="width:100%">
+        이름 변경
       </button>
-    </div>
 
-    <div class="profile">
-      <div class="avatar" id="profile-avatar">A</div>
-      <div class="profile-info">
-        <div class="profile-name" id="profile-name">게스트</div>
-        <div class="online">● 온라인</div>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center">
-  <button class="icon-btn" id="admin-button" title="관리자 로그인">⚙</button>
-  <button class="icon-btn" id="edit-profile" title="닉네임 변경">✎</button>
-</div>
+      <button class="small-btn" id="deleteAllBtn"
+        style="width:100%;margin-top:8px;display:none">
+        전체 메시지 삭제
+      </button>
     </div>
   </aside>
 
   <main class="chat">
-    <header class="chat-head">
-      <div class="chat-title">
-        <span class="channel-icon" id="current-icon">✦</span>
-        <div>
-          <h2 id="current-name">잡담</h2>
-          <p id="current-description">편하게 이야기를 나눠 보세요.</p>
-        </div>
+    <header class="topbar">
+      <div class="logo" style="width:38px;height:38px;border-radius:12px">#</div>
+
+      <div>
+        <h2 id="channelTitle">일반</h2>
+        <div class="sub" id="channelDesc">Axion 커뮤니티에 오신 것을 환영합니다.</div>
       </div>
-      <div class="head-actions">
-        <button class="icon-btn" id="theme-toggle" title="테마 변경">☀️</button>
-        <span class="live">● 실시간</span>
-      </div>
+
+      <span class="admin-badge">ADMIN</span>
+      <span class="live">LIVE CHAT</span>
     </header>
 
     <section class="messages" id="messages">
-      <div class="day-divider">대화 시작</div>
+      <div class="empty">
+        <div style="font-size:40px">✦</div>
+        <b>Axion에 오신 것을 환영합니다</b>
+        <div>첫 메시지를 보내 대화를 시작하세요.</div>
+      </div>
     </section>
 
     <div class="composer-wrap">
-      <div class="replying" id="replying">
-        <span id="replying-text">답장 작성 중</span>
-        <button id="cancel-reply" title="답장 취소">✕</button>
+      <div class="reply-preview" id="replyPreview">
+        <span id="replyText"></span>
+        <button class="icon-btn" id="cancelReply">×</button>
       </div>
 
-      <form class="composer" id="form" style="position:relative">
-        <div id="mention-list"></div>
-        <input id="message" maxlength="1000" placeholder="메시지를 입력하세요... (@로 멘션)" autocomplete="off">
-        <button class="send" type="submit" title="보내기">➤</button>
+      <form class="compose" id="sendForm">
+        <input id="messageInput" autocomplete="off" maxlength="2000"
+          placeholder="메시지를 입력하세요... (@멘션 가능)">
+        <button class="send" type="submit">보내기 ↗</button>
       </form>
 
-      <div class="footer-hint">
-        <span>Enter 전송 · Shift + Enter 줄바꿈</span>
-        <span>Axion Chat</span>
-      </div>
+      <div class="hint">Enter로 전송 · 메시지의 답장 버튼으로 답장할 수 있어요</div>
     </div>
   </main>
 </div>
 
-<!-- 닉네임 입력 -->
-<div class="modal" id="profile-modal">
-  <div class="modal-box">
-    <h3>Axion에 오신 것을 환영해요</h3>
-    <p>채팅에서 사용할 닉네임을 입력하세요.</p>
-    <input id="nickname-input" maxlength="20" placeholder="닉네임">
-    <div class="modal-actions">
-      <button class="primary" id="save-nickname">시작하기</button>
-    </div>
-    <div class="error" id="profile-error"></div>
-  </div>
-</div>
-
-<!-- 채널 추가 -->
-<div class="modal" id="channel-modal">
-  <div class="modal-box">
-    <h3>새 채널 만들기</h3>
-    <p>친구들과 대화할 채널 이름을 정하세요.</p>
-    <input id="channel-input" maxlength="30" placeholder="예: 게임 이야기">
-    <div class="modal-actions">
-      <button class="primary" id="create-channel">채널 만들기</button>
-      <button class="secondary" data-close="channel-modal">취소</button>
-    </div>
-    <div class="error" id="channel-error"></div>
-  </div>
-</div>
-
-<!-- 관리자 로그인 -->
-<div class="modal" id="admin-modal">
-  <div class="modal-box">
+<!-- 관리자 비밀번호 모달 -->
+<div class="modal-back" id="adminModal">
+  <form class="modal" id="adminForm">
     <h3>관리자 로그인</h3>
-    <p>관리자 Firebase 계정으로 로그인하세요.</p>
-    <input id="admin-email" type="email" placeholder="이메일" autocomplete="username">
-    <input id="admin-password" type="password" placeholder="비밀번호" autocomplete="current-password">
+    <p>관리자 비밀번호를 입력하세요.</p>
+
+    <input class="field" id="adminPassword" type="password"
+      placeholder="관리자 비밀번호" required>
+
+    <div class="error" id="adminError"></div>
+
     <div class="modal-actions">
-      <button class="primary" id="admin-login">로그인</button>
-      <button class="secondary" data-close="admin-modal">취소</button>
+      <button type="button" class="secondary" data-close="adminModal">취소</button>
+      <button class="primary" type="submit">로그인</button>
     </div>
-    <div class="error" id="admin-error"></div>
-  </div>
+  </form>
+</div>
+
+<!-- 입력 모달 -->
+<div class="modal-back" id="simpleModal">
+  <form class="modal" id="simpleForm">
+    <h3 id="simpleTitle">입력</h3>
+    <p id="simpleDesc"></p>
+
+    <input class="field" id="simpleInput" required>
+
+    <div class="error" id="simpleError"></div>
+
+    <div class="modal-actions">
+      <button type="button" class="secondary" data-close="simpleModal">취소</button>
+      <button class="primary" type="submit">확인</button>
+    </div>
+  </form>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import {
-  getDatabase, ref, push, set, update, remove, onValue,
-  onChildAdded, onChildRemoved, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import {
-  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
+import {
+  getDatabase,
+  ref,
+  push,
+  set,
+  onValue,
+  remove
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+/* Firebase 설정 */
 const firebaseConfig = {
   apiKey: "AIzaSyAf-nM5PJRUo2q7TvX2LeZNKxh8A021bck",
   authDomain: "chat-27c50.firebaseapp.com",
@@ -625,449 +633,503 @@ const firebaseConfig = {
   appId: "1:811770063187:web:ba17f4f49ebb682c9cd9a6"
 };
 
-// Firebase Authentication에서 관리자 계정을 만든 뒤,
-// 그 계정의 UID를 아래 따옴표 안에 입력하세요.
-const ADMIN_UID = "여기에_관리자_UID_입력";
+/*
+  데모용 비밀번호.
+  HTML에 들어 있는 비밀번호는 개발자 도구에서 확인할 수 있습니다.
+  실제 서비스에서는 서버에서 비밀번호를 검증해야 합니다.
+*/
+const ADMIN_PASSWORD = "AxionAdmin2026!";
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getDatabase(firebaseApp);
 
 const $ = id => document.getElementById(id);
-const icons = ["✦", "◈", "☾", "✧", "♧", "◇"];
-let nickname = localStorage.getItem("axionNickname") || "";
+
+const escapeHTML = value =>
+  String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+
+const initial = name =>
+  (String(name || "?").trim()[0] || "?").toUpperCase();
+
+let myName = localStorage.getItem("axion_name") || "Guest";
 let currentChannel = "general";
 let isAdmin = false;
 let replyTo = null;
-let messagesUnsubscribe = [];
-let channelsData = { general: { name: "잡담", description: "편하게 이야기를 나눠 보세요.", icon: "✦" } };
-let rendered = new Map();
+let messagesCache = {};
+let channelMap = {
+  general: {
+    name: "일반",
+    desc: "Axion 커뮤니티에 오신 것을 환영합니다."
+  }
+};
 
-function openModal(id) { $(id).style.display = "grid"; }
-function closeModal(id) { $(id).style.display = "none"; }
+let unsubscribeMessages = null;
 
-document.querySelectorAll("[data-close]").forEach(btn => {
-  btn.addEventListener("click", () => closeModal(btn.dataset.close));
+/* 모달 */
+function openModal(id) {
+  $(id).classList.add("open");
+}
+
+function closeModal(id) {
+  $(id).classList.remove("open");
+}
+
+document.querySelectorAll("[data-close]").forEach(button => {
+  button.addEventListener("click", () => {
+    closeModal(button.dataset.close);
+  });
 });
 
-function showProfile() {
-  $("profile-name").textContent = nickname || "게스트";
-  $("profile-avatar").textContent = (nickname || "A").slice(0, 1);
+/* 관리자 상태 */
+function setAdmin(enabled) {
+  isAdmin = enabled;
+  document.body.classList.toggle("admin", enabled);
+
+  $("profileRole").textContent = enabled ? "관리자" : "온라인";
+  $("adminBtn").textContent = enabled ? "✓" : "⚙";
+  $("deleteAllBtn").style.display = enabled ? "block" : "none";
+
+  renderMessages();
 }
 
-function escapeMentionText(element, text) {
-  const parts = text.split(/(@[^\s@]+)/g);
-  for (const part of parts) {
-    if (/^@.{1,}$/.test(part)) {
-      const span = document.createElement("span");
-      span.className = "mention";
-      span.textContent = part;
-      element.appendChild(span);
-    } else {
-      element.appendChild(document.createTextNode(part));
+/* 입력 모달 */
+function showInputModal(title, description, placeholder, callback) {
+  $("simpleTitle").textContent = title;
+  $("simpleDesc").textContent = description;
+  $("simpleInput").placeholder = placeholder;
+  $("simpleInput").value = "";
+  $("simpleError").textContent = "";
+
+  openModal("simpleModal");
+
+  $("simpleForm").onsubmit = event => {
+    event.preventDefault();
+
+    const value = $("simpleInput").value.trim();
+
+    if (!value) return;
+
+    const result = callback(value);
+
+    if (result !== false) {
+      closeModal("simpleModal");
     }
-  }
-}
-
-function clearMessageListeners() {
-  messagesUnsubscribe.forEach(unsub => unsub());
-  messagesUnsubscribe = [];
-  rendered.clear();
-}
-
-function renderMessage(id, data) {
-  if (rendered.has(id)) return;
-
-  const row = document.createElement("article");
-  row.className = "msg";
-  row.dataset.id = id;
-
-  const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = (data.name || "?").slice(0, 1);
-
-  const main = document.createElement("div");
-  main.className = "msg-main";
-
-  const meta = document.createElement("div");
-  meta.className = "meta";
-
-  const name = document.createElement("span");
-  name.className = "name";
-  name.textContent = data.name || "익명";
-
-  const time = document.createElement("span");
-  time.className = "time";
-  time.textContent = data.createdAt
-    ? new Date(data.createdAt).toLocaleTimeString("ko-KR", {hour:"2-digit", minute:"2-digit"})
-    : "방금";
-
-  meta.append(name, time);
-  main.append(meta);
-
-  if (data.replyTo && data.replyText) {
-    const preview = document.createElement("div");
-    preview.className = "reply-preview";
-    preview.textContent = "↩ " + data.replyName + ": " + data.replyText;
-    main.append(preview);
-  }
-
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  escapeMentionText(bubble, data.text || "");
-  main.append(bubble);
-
-  const tools = document.createElement("div");
-  tools.className = "msg-tools";
-
-  const replyBtn = document.createElement("button");
-  replyBtn.className = "tool-btn";
-  replyBtn.textContent = "↩ 답장";
-  replyBtn.addEventListener("click", () => startReply(id, data));
-  tools.append(replyBtn);
-
-  if (isAdmin) {
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "tool-btn danger";
-    deleteBtn.textContent = "삭제";
-    deleteBtn.addEventListener("click", async () => {
-      if (!isAdmin) return alert("관리자 권한이 필요합니다.");
-      if (!confirm("이 메시지를 삭제할까요?")) return;
-      try {
-        await remove(ref(db, `channelMessages/${currentChannel}/${id}`));
-      } catch (e) {
-        alert("삭제에 실패했습니다. Firebase 보안 규칙을 확인하세요.");
-      }
-    });
-    tools.append(deleteBtn);
-  }
-
-  main.append(tools);
-  row.append(avatar, main);
-
-  // 메시지를 옆으로 밀어 답장
-  let startX = 0, startY = 0;
-  row.addEventListener("touchstart", e => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-  }, { passive: true });
-
-  row.addEventListener("touchend", e => {
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = e.changedTouches[0].clientY - startY;
-    if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy)) {
-      startReply(id, data);
-    }
-  }, { passive: true });
-
-  rendered.set(id, row);
-  $("messages").append(row);
-  $("messages").scrollTop = $("messages").scrollHeight;
-}
-
-function startReply(id, data) {
-  replyTo = { id, name: data.name || "익명", text: data.text || "" };
-  $("replying-text").textContent = `↩ ${replyTo.name}: ${replyTo.text.slice(0, 100)}`;
-  $("replying").style.display = "flex";
-  $("message").focus();
-}
-
-function cancelReply() {
-  replyTo = null;
-  $("replying").style.display = "none";
-}
-
-$("cancel-reply").addEventListener("click", cancelReply);
-
-function loadMessages() {
-  clearMessageListeners();
-  $("messages").replaceChildren();
-
-  const divider = document.createElement("div");
-  divider.className = "day-divider";
-  divider.textContent = "대화 시작";
-  $("messages").append(divider);
-
-  const path = ref(db, `channelMessages/${currentChannel}`);
-  const unsub = onValue(path, snapshot => {
-    $("messages").replaceChildren();
-    rendered.clear();
-
-    const dividerAgain = document.createElement("div");
-    dividerAgain.className = "day-divider";
-    dividerAgain.textContent = "대화 시작";
-    $("messages").append(dividerAgain);
-
-    const items = [];
-    snapshot.forEach(child => items.push({ id: child.key, data: child.val() }));
-    items.sort((a, b) => (a.data.createdAt || 0) - (b.data.createdAt || 0));
-    items.slice(-200).forEach(item => renderMessage(item.id, item.data));
-    $("messages").scrollTop = $("messages").scrollHeight;
-  }, error => {
-    console.error(error);
-    showSystemMessage("메시지를 불러오지 못했습니다. Firebase 규칙을 확인하세요.");
-  });
-
-  messagesUnsubscribe.push(unsub);
-}
-
-function showSystemMessage(text) {
-  const div = document.createElement("div");
-  div.className = "day-divider";
-  div.textContent = text;
-  $("messages").append(div);
-}
-
-function setCurrentChannel(id) {
-  currentChannel = id;
-  const channel = channelsData[id];
-  if (!channel) return;
-
-  $("current-name").textContent = channel.name;
-  $("current-description").textContent = channel.description || "편하게 이야기를 나눠 보세요.";
-  $("current-icon").textContent = channel.icon || "✦";
-
-  document.querySelectorAll(".channel").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.channel === id);
-  });
-
-  cancelReply();
-  loadMessages();
-}
-
-function renderChannels() {
-  const list = $("channels");
-  list.replaceChildren();
-
-  Object.entries(channelsData).forEach(([id, channel]) => {
-    const btn = document.createElement("button");
-    btn.className = "channel" + (id === currentChannel ? " active" : "");
-    btn.dataset.channel = id;
-
-    const icon = document.createElement("span");
-    icon.className = "channel-icon";
-    icon.textContent = channel.icon || "✦";
-
-    const name = document.createElement("span");
-    name.className = "channel-name";
-    name.textContent = channel.name;
-
-    const dot = document.createElement("span");
-    dot.className = "channel-dot";
-    dot.textContent = "●";
-
-    btn.append(icon, name, dot);
-    btn.addEventListener("click", () => setCurrentChannel(id));
-    list.append(btn);
-  });
-}
-
-onValue(ref(db, "channels"), snapshot => {
-  const data = snapshot.val() || {};
-  channelsData = {
-    general: { name: "잡담", description: "편하게 이야기를 나눠 보세요.", icon: "✦" },
-    ...data
   };
-  renderChannels();
 
-  if (!channelsData[currentChannel]) currentChannel = "general";
-  setCurrentChannel(currentChannel);
-}, error => {
-  console.error(error);
-});
+  setTimeout(() => $("simpleInput").focus(), 50);
+}
 
-$("form").addEventListener("submit", async e => {
-  e.preventDefault();
-  const input = $("message");
-  const text = input.value.trim();
-  if (!text || !nickname) return;
+/* 채널 */
+function renderChannels() {
+  const container = $("channels");
+  container.replaceChildren();
 
-  try {
-    const messageData = {
-      name: nickname,
-      text,
-      createdAt: Date.now()
+  Object.entries(channelMap).forEach(([id, channel]) => {
+    const button = document.createElement("button");
+
+    button.className =
+      "channel" + (id === currentChannel ? " active" : "");
+
+    button.textContent = "# " + channel.name;
+
+    button.onclick = () => switchChannel(id);
+
+    container.appendChild(button);
+  });
+}
+
+function listenChannels() {
+  onValue(ref(db, "channels"), snapshot => {
+    const remoteChannels = snapshot.val() || {};
+
+    channelMap = {
+      general: {
+        name: "일반",
+        desc: "Axion 커뮤니티에 오신 것을 환영합니다."
+      },
+      ...remoteChannels
     };
 
-    if (replyTo) {
-      messageData.replyTo = replyTo.id;
-      messageData.replyName = replyTo.name;
-      messageData.replyText = replyTo.text;
+    renderChannels();
+
+    if (!channelMap[currentChannel]) {
+      currentChannel = "general";
     }
 
-    await push(ref(db, `channelMessages/${currentChannel}`), messageData);
-    input.value = "";
-    cancelReply();
-    $("mention-list").style.display = "none";
-    input.focus();
-  } catch (error) {
-    alert("메시지를 보내지 못했습니다. Firebase Realtime Database 규칙을 확인하세요.");
-    console.error(error);
-  }
-});
+    $("channelTitle").textContent =
+      channelMap[currentChannel].name;
 
-$("add-channel").addEventListener("click", () => {
-  $("channel-error").textContent = "";
-  $("channel-input").value = "";
-  openModal("channel-modal");
-});
-
-$("create-channel").addEventListener("click", async () => {
-  const name = $("channel-input").value.trim();
-  if (!name) {
-    $("channel-error").textContent = "채널 이름을 입력하세요.";
-    return;
-  }
-
-  const id = "channel_" + Date.now().toString(36);
-  try {
-    await set(ref(db, "channels/" + id), {
-      name,
-      description: "편하게 이야기를 나눠 보세요.",
-      icon: icons[Object.keys(channelsData).length % icons.length]
-    });
-    closeModal("channel-modal");
-    setCurrentChannel(id);
-  } catch (error) {
-    $("channel-error").textContent = "채널을 만들 수 없습니다. Firebase 규칙을 확인하세요.";
-  }
-});
-
-$("edit-profile").addEventListener("click", () => {
-  $("nickname-input").value = nickname;
-  $("profile-error").textContent = "";
-  openModal("profile-modal");
-});
-
-$("save-nickname").addEventListener("click", () => {
-  const name = $("nickname-input").value.trim();
-  if (!name) {
-    $("profile-error").textContent = "닉네임을 입력하세요.";
-    return;
-  }
-  nickname = name.slice(0, 20);
-  localStorage.setItem("axionNickname", nickname);
-  showProfile();
-  closeModal("profile-modal");
-});
-
-$("theme-toggle").addEventListener("click", () => {
-  const light = document.body.classList.toggle("light");
-  document.body.classList.toggle("dark", !light);
-  $("theme-toggle").textContent = light ? "🌙" : "☀️";
-  localStorage.setItem("axionTheme", light ? "light" : "dark");
-});
-
-const savedTheme = localStorage.getItem("axionTheme");
-if (savedTheme === "light") {
-  document.body.classList.remove("dark");
-  document.body.classList.add("light");
-  $("theme-toggle").textContent = "🌙";
+    $("channelDesc").textContent =
+      channelMap[currentChannel].desc || "Axion 채널";
+  }, error => {
+    console.error("채널 불러오기 오류:", error);
+  });
 }
 
-$("admin-open")?.addEventListener("click", () => openModal("admin-modal"));
-  $("admin-button").addEventListener("click", () => {
-  $("admin-error").textContent = "";
-  openModal("admin-modal");
-});
+function switchChannel(id) {
+  currentChannel = id;
+  replyTo = null;
 
-// 관리자 버튼은 프로필 편집 버튼을 길게 누르면 열립니다.
-let holdTimer;
-$("edit-profile").addEventListener("contextmenu", e => {
-  e.preventDefault();
-  openModal("admin-modal");
-});
+  updateReplyPreview();
 
-$("admin-login").addEventListener("click", async () => {
-  $("admin-error").textContent = "";
-  try {
-    const credential = await signInWithEmailAndPassword(
-      auth,
-      $("admin-email").value.trim(),
-      $("admin-password").value
+  $("channelTitle").textContent =
+    channelMap[id]?.name || id;
+
+  $("channelDesc").textContent =
+    channelMap[id]?.desc || "Axion 채널";
+
+  renderChannels();
+  listenMessages();
+}
+
+/* 메시지 */
+function listenMessages() {
+  if (unsubscribeMessages) {
+    unsubscribeMessages();
+  }
+
+  unsubscribeMessages = onValue(
+    ref(db, `channelMessages/${currentChannel}`),
+    snapshot => {
+      messagesCache = snapshot.val() || {};
+      renderMessages();
+    },
+    error => {
+      $("messages").textContent =
+        "메시지를 불러오지 못했습니다: " + error.message;
+    }
+  );
+}
+
+function formatTime(timestamp) {
+  if (!timestamp) return "방금";
+
+  return new Date(timestamp).toLocaleTimeString("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function formatMessage(text) {
+  return escapeHTML(text)
+    .replace(
+      /(^|\s)@([a-zA-Z0-9가-힣_]+)/g,
+      '$1<span style="font-weight:bold;color:var(--accent)">@$2</span>'
+    )
+    .replace(/\n/g, "<br>");
+}
+
+function renderMessages() {
+  const container = $("messages");
+  container.replaceChildren();
+
+  const entries = Object.entries(messagesCache)
+    .sort((a, b) =>
+      (a[1].timestamp || 0) - (b[1].timestamp || 0)
     );
 
-    if (credential.user.uid !== ADMIN_UID) {
-      await signOut(auth);
-      $("admin-error").textContent = "관리자 권한이 없는 계정입니다.";
-      return;
-    }
-
-    isAdmin = true;
-    closeModal("admin-modal");
-    loadMessages();
-  } catch (error) {
-    $("admin-error").textContent = "로그인 실패: 이메일과 비밀번호를 확인하세요.";
-  }
-});
-
-onAuthStateChanged(auth, user => {
-  isAdmin = !!user && user.uid === ADMIN_UID;
-  if (user && !isAdmin) signOut(auth);
-  if (isAdmin) loadMessages();
-});
-
-$("messages").addEventListener("dblclick", async e => {
-  if (!isAdmin) return;
-  const row = e.target.closest(".msg");
-  if (!row) return;
-  if (!confirm("선택한 메시지를 삭제할까요?")) return;
-  try {
-    await remove(ref(db, `channelMessages/${currentChannel}/${row.dataset.id}`));
-  } catch (error) {
-    alert("메시지를 삭제하지 못했습니다.");
-  }
-});
-
-$("message").addEventListener("input", () => {
-  const match = $("message").value.match(/@([^\s@]*)$/);
-  const list = $("mention-list");
-  list.replaceChildren();
-
-  if (!match) {
-    list.style.display = "none";
+  if (entries.length === 0) {
+    container.innerHTML = `
+      <div class="empty">
+        <div style="font-size:40px">✦</div>
+        <b>아직 메시지가 없어요</b>
+        <div>첫 메시지를 보내 대화를 시작하세요.</div>
+      </div>
+    `;
     return;
   }
 
-  const keyword = match[1].toLowerCase();
-  const names = [...new Set(
-    [...document.querySelectorAll(".msg .meta .name")]
-      .map(el => el.textContent)
-  )].filter(name => name.toLowerCase().includes(keyword));
+  entries.forEach(([id, message]) => {
+    const mine = message.name === myName;
+    const article = document.createElement("article");
 
-  if (!names.length) {
-    list.style.display = "none";
-    return;
-  }
+    article.className = "message" + (mine ? " mine" : "");
 
-  names.forEach(name => {
-    const option = document.createElement("div");
-    option.className = "mention-option";
-    option.textContent = "@" + name;
-    option.addEventListener("mousedown", e => e.preventDefault());
-    option.addEventListener("click", () => {
-      $("message").value = $("message").value.replace(/@([^\s@]*)$/, "@" + name + " ");
-      list.style.display = "none";
-      $("message").focus();
-    });
-    list.append(option);
+    const quote = message.replyText
+      ? `<div class="replyquote">
+          ↪ ${escapeHTML(message.replyName || "사용자")}:
+          ${escapeHTML(message.replyText).slice(0, 180)}
+        </div>`
+      : "";
+
+    const deleteButton = isAdmin
+      ? `<button data-delete="${escapeHTML(id)}">삭제</button>`
+      : "";
+
+    article.innerHTML = `
+      <div class="avatar">${escapeHTML(initial(message.name))}</div>
+
+      <div class="msgbody">
+        <div class="msgmeta">
+          <span class="msgname">${escapeHTML(message.name || "Guest")}</span>
+          <span>${formatTime(message.timestamp)}</span>
+        </div>
+
+        <div class="bubble">
+          ${quote}
+          ${formatMessage(message.text || "")}
+        </div>
+
+        <div class="tools">
+          <button data-reply="${escapeHTML(id)}">답장</button>
+          ${deleteButton}
+        </div>
+      </div>
+    `;
+
+    container.appendChild(article);
   });
 
-  list.style.display = "block";
-});
+  container.querySelectorAll("[data-reply]").forEach(button => {
+    button.onclick = () => {
+      const message = messagesCache[button.dataset.reply];
 
-$("message").addEventListener("keydown", e => {
-  if (e.key === "Escape") $("mention-list").style.display = "none";
-});
+      if (!message) return;
 
-document.addEventListener("click", e => {
-  if (e.target !== $("message") && !$("mention-list").contains(e.target)) {
-    $("mention-list").style.display = "none";
+      replyTo = {
+        id: button.dataset.reply,
+        name: message.name || "Guest",
+        text: message.text || ""
+      };
+
+      updateReplyPreview();
+      $("messageInput").focus();
+    };
+  });
+
+  container.querySelectorAll("[data-delete]").forEach(button => {
+    button.onclick = async () => {
+      if (!isAdmin) return;
+
+      if (!confirm("이 메시지를 삭제할까요?")) return;
+
+      try {
+        await remove(ref(
+          db,
+          `channelMessages/${currentChannel}/${button.dataset.delete}`
+        ));
+      } catch (error) {
+        alert("메시지 삭제 실패: " + error.message);
+      }
+    };
+  });
+
+  container.scrollTop = container.scrollHeight;
+}
+
+/* 답장 */
+function updateReplyPreview() {
+  const preview = $("replyPreview");
+
+  if (replyTo) {
+    preview.classList.add("show");
+
+    $("replyText").textContent =
+      `${replyTo.name}에게 답장: ${replyTo.text.slice(0, 100)}`;
+  } else {
+    preview.classList.remove("show");
+  }
+}
+
+$("cancelReply").onclick = () => {
+  replyTo = null;
+  updateReplyPreview();
+};
+
+/* 메시지 전송 */
+$("sendForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const text = $("messageInput").value.trim();
+
+  if (!text) return;
+
+  const message = {
+    name: myName,
+    text,
+    timestamp: Date.now()
+  };
+
+  if (replyTo) {
+    message.replyId = replyTo.id;
+    message.replyName = replyTo.name;
+    message.replyText = replyTo.text;
+  }
+
+  try {
+    await set(
+      push(ref(db, `channelMessages/${currentChannel}`)),
+      message
+    );
+
+    $("messageInput").value = "";
+    replyTo = null;
+    updateReplyPreview();
+  } catch (error) {
+    alert("메시지 전송 실패: " + error.message);
   }
 });
 
-showProfile();
-if (!nickname) openModal("profile-modal");
+/* 관리자 로그인 */
+$("adminBtn").onclick = () => {
+  if (isAdmin) {
+    if (confirm("관리자 모드를 종료할까요?")) {
+      setAdmin(false);
+    }
+    return;
+  }
+
+  $("adminPassword").value = "";
+  $("adminError").textContent = "";
+
+  openModal("adminModal");
+
+  setTimeout(() => $("adminPassword").focus(), 50);
+};
+
+$("adminForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const password = $("adminPassword").value;
+
+  if (password === ADMIN_PASSWORD) {
+    setAdmin(true);
+    closeModal("adminModal");
+    $("adminError").textContent = "";
+
+    alert("관리자 모드가 활성화되었습니다.");
+  } else {
+    $("adminError").textContent =
+      "비밀번호가 올바르지 않습니다.";
+
+    $("adminPassword").select();
+  }
+});
+
+/* 전체 메시지 삭제 */
+$("deleteAllBtn").onclick = async () => {
+  if (!isAdmin) return;
+
+  const confirmed = confirm(
+    `#${channelMap[currentChannel]?.name || currentChannel} 채널의 모든 메시지를 삭제할까요?`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    await remove(
+      ref(db, `channelMessages/${currentChannel}`)
+    );
+
+    alert("현재 채널의 메시지를 삭제했습니다.");
+  } catch (error) {
+    alert("전체 삭제 실패: " + error.message);
+  }
+};
+
+/* 채널 추가 */
+$("addChannel").onclick = () => {
+  if (!isAdmin) {
+    alert("채널 추가는 관리자 모드에서 사용할 수 있습니다.");
+    return;
+  }
+
+  showInputModal(
+    "채널 추가",
+    "새 채널 이름을 입력하세요.",
+    "예: 게임",
+    name => {
+      const id = name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[.#$\[\]/]/g, "")
+        .slice(0, 35);
+
+      if (!id) {
+        $("simpleError").textContent =
+          "올바른 이름을 입력하세요.";
+        return false;
+      }
+
+      if (channelMap[id]) {
+        $("simpleError").textContent =
+          "이미 있는 채널입니다.";
+        return false;
+      }
+
+      set(ref(db, `channels/${id}`), {
+        name,
+        desc: `${name} 채널`
+      })
+      .then(() => switchChannel(id))
+      .catch(error => {
+        alert("채널 추가 실패: " + error.message);
+      });
+
+      return true;
+    }
+  );
+};
+
+/* 닉네임 변경 */
+$("nameBtn").onclick = () => {
+  showInputModal(
+    "이름 변경",
+    "채팅에 표시할 이름을 입력하세요.",
+    "닉네임",
+    name => {
+      if (name.length > 24) {
+        $("simpleError").textContent =
+          "24자 이하로 입력하세요.";
+        return false;
+      }
+
+      myName = name;
+      localStorage.setItem("axion_name", name);
+
+      $("profileName").textContent = name;
+      $("profileAvatar").textContent = initial(name);
+
+      renderMessages();
+
+      return true;
+    }
+  );
+};
+
+/* 테마 변경 */
+$("themeBtn").onclick = () => {
+  const dark =
+    document.documentElement.dataset.theme !== "dark";
+
+  document.documentElement.dataset.theme =
+    dark ? "dark" : "light";
+
+  localStorage.setItem(
+    "axion_theme",
+    dark ? "dark" : "light"
+  );
+
+  $("themeBtn").textContent = dark ? "☀" : "☾";
+};
+
+/* 초기 설정 */
+if (localStorage.getItem("axion_theme") === "dark") {
+  document.documentElement.dataset.theme = "dark";
+  $("themeBtn").textContent = "☀";
+}
+
+$("profileName").textContent = myName;
+$("profileAvatar").textContent = initial(myName);
+
+listenChannels();
+listenMessages();
 </script>
 </body>
 </html>
