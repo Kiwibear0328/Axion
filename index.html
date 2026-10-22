@@ -517,7 +517,10 @@ body.light {
         <div class="profile-name" id="profile-name">게스트</div>
         <div class="online">● 온라인</div>
       </div>
-      <button class="icon-btn" id="edit-profile" title="닉네임 변경">✎</button>
+      <div style="display:flex;gap:6px;align-items:center">
+  <button class="icon-btn" id="admin-button" title="관리자 로그인">⚙</button>
+  <button class="icon-btn" id="edit-profile" title="닉네임 변경">✎</button>
+</div>
     </div>
   </aside>
 
@@ -963,6 +966,10 @@ if (savedTheme === "light") {
 }
 
 $("admin-open")?.addEventListener("click", () => openModal("admin-modal"));
+  $("admin-button").addEventListener("click", () => {
+  $("admin-error").textContent = "";
+  openModal("admin-modal");
+});
 
 // 관리자 버튼은 프로필 편집 버튼을 길게 누르면 열립니다.
 let holdTimer;
