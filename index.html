@@ -981,7 +981,12 @@ async function askAxion(question) {
     console.error(error);
 
     await update(aiRef,{
-      text:"AI 응답에 실패했어. Worker 주소와 NVIDIA API 설정을 확인해줘.",
+      text:"await update(aiRef, {
+  text: "AI 오류: " + error.message,
+  createdAt: serverTimestamp()
+});
+
+toast("AI 오류: " + error.message);",
       createdAt:serverTimestamp()
     });
 
