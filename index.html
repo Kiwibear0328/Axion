@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -161,15 +162,6 @@ button { cursor:pointer; }
   border-color:var(--blue);
 }
 
-.sidebar-action {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  width:100%;
-  margin-bottom:7px;
-  text-align:left;
-}
-
 .admin-panel {
   display:none;
   padding:12px;
@@ -237,7 +229,6 @@ button { cursor:pointer; }
   min-width:0;
 }
 
-/* 닉네임은 테마에 맞게 표시 */
 .profile-name {
   font-weight:bold;
   color:var(--text) !important;
@@ -272,6 +263,7 @@ button { cursor:pointer; }
   justify-content:space-between;
   padding:0 22px;
   border-bottom:1px solid var(--line);
+  position:relative;
 }
 
 .room-title {
@@ -283,6 +275,87 @@ button { cursor:pointer; }
   font-size:11px;
   color:var(--sub);
   margin-top:5px;
+}
+
+/* 메뉴 버튼 */
+.menu-area {
+  position:relative;
+}
+
+.menu-button {
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  border-radius:9px;
+  padding:9px 15px;
+  font-size:13px;
+  font-weight:bold;
+  transition:.2s;
+}
+
+.menu-button:hover {
+  border-color:var(--blue);
+  background:rgba(57,120,246,.12);
+}
+
+.menu-dropdown {
+  display:none;
+  position:absolute;
+  top:48px;
+  right:0;
+  width:205px;
+  padding:8px;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow:0 12px 35px #0005;
+  z-index:15;
+}
+
+.menu-dropdown.open {
+  display:block;
+  animation:menuAppear .15s ease-out;
+}
+
+@keyframes menuAppear {
+  from {
+    opacity:0;
+    transform:translateY(-5px);
+  }
+  to {
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.menu-item {
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:var(--text);
+  text-align:left;
+  font-size:13px;
+}
+
+.menu-item:hover {
+  background:rgba(57,120,246,.15);
+}
+
+.menu-item-icon {
+  width:20px;
+  text-align:center;
+  color:var(--blue);
+}
+
+.menu-divider {
+  height:1px;
+  background:var(--line);
+  margin:5px 3px;
 }
 
 .messages {
@@ -577,12 +650,6 @@ button { cursor:pointer; }
     height:34px;
   }
 
-  .sidebar-action {
-    justify-content:center;
-    padding:10px 3px;
-    font-size:0;
-  }
-
   .admin-panel {
     position:fixed;
     left:75px;
@@ -595,6 +662,7 @@ button { cursor:pointer; }
   .topbar { padding:0 12px; }
   .messages { padding:13px; }
   .composer-wrap { padding:10px; }
+  .menu-dropdown { right:0; }
 }
 </style>
 </head>
@@ -620,10 +688,6 @@ button { cursor:pointer; }
 
     <div class="sidebar-bottom">
 
-      <button class="small-btn sidebar-action" id="admin-button">
-        ⚙ 관리자 설정
-      </button>
-
       <div class="admin-panel" id="admin-panel">
         <div class="admin-panel-title">관리자 설정</div>
 
@@ -644,10 +708,6 @@ button { cursor:pointer; }
         </div>
       </div>
 
-      <button class="small-btn sidebar-action" id="theme-button">
-        ◐ 테마 변경
-      </button>
-
       <div class="profile">
         <div class="avatar" id="my-avatar">?</div>
 
@@ -655,8 +715,6 @@ button { cursor:pointer; }
           <div class="profile-name" id="my-name">사용자</div>
           <div class="profile-status">온라인</div>
         </div>
-
-        <button class="small-btn" id="edit-profile">✎</button>
       </div>
 
     </div>
@@ -670,7 +728,28 @@ button { cursor:pointer; }
         <div class="room-sub">Axion 실시간 채팅</div>
       </div>
 
-      <button class="small-btn" id="mobile-profile">프로필</button>
+      <div class="menu-area">
+        <button class="menu-button" id="menu-button">메뉴 ☰</button>
+
+        <div class="menu-dropdown" id="menu-dropdown">
+          <button class="menu-item" id="menu-admin">
+            <span class="menu-item-icon">⚙</span>
+            관리자 설정
+          </button>
+
+          <button class="menu-item" id="menu-profile">
+            <span class="menu-item-icon">👤</span>
+            프로필 설정
+          </button>
+
+          <div class="menu-divider"></div>
+
+          <button class="menu-item" id="menu-theme">
+            <span class="menu-item-icon" id="theme-icon">◐</span>
+            <span id="theme-label">라이트 모드</span>
+          </button>
+        </div>
+      </div>
     </header>
 
     <section class="messages" id="messages"></section>
@@ -761,6 +840,7 @@ let editingCategory = null;
 let replyingTo = null;
 let messagesCache = [];
 let onlineCache = {};
+let categoryCache = {};
 
 let stopMessages = null;
 let stopCategories = null;
@@ -798,6 +878,33 @@ function timeText(timestamp) {
   });
 }
 
+/* 메뉴 */
+$("menu-button").onclick = e => {
+  e.stopPropagation();
+  $("menu-dropdown").classList.toggle("open");
+};
+
+document.addEventListener("click",e => {
+  if (!e.target.closest(".menu-area")) {
+    $("menu-dropdown").classList.remove("open");
+  }
+});
+
+$("menu-admin").onclick = () => {
+  $("menu-dropdown").classList.remove("open");
+  $("admin-panel").classList.toggle("open");
+};
+
+$("menu-profile").onclick = () => {
+  $("menu-dropdown").classList.remove("open");
+  showProfile();
+};
+
+$("menu-theme").onclick = () => {
+  $("menu-dropdown").classList.remove("open");
+  toggleTheme();
+};
+
 /* 닉네임 */
 if (nickname) {
   $("join-modal").classList.add("hidden");
@@ -829,9 +936,6 @@ function showProfile() {
   $("profile-modal").classList.remove("hidden");
 }
 
-$("edit-profile").onclick = showProfile;
-$("mobile-profile").onclick = showProfile;
-
 $("close-profile").onclick = () => {
   $("profile-modal").classList.add("hidden");
 };
@@ -862,11 +966,7 @@ $("save-profile").onclick = async () => {
   toast("프로필을 수정했어");
 };
 
-/* 관리자 사이드바 */
-$("admin-button").onclick = () => {
-  $("admin-panel").classList.toggle("open");
-};
-
+/* 관리자 */
 $("admin-login").onclick = () => {
   if ($("admin-password").value === "KB0328") {
     isAdmin = true;
@@ -905,6 +1005,8 @@ function startCategoryListener() {
       const data = snapshot.val() || {};
       const entries = Object.entries(data);
 
+      categoryCache = data;
+
       if (!entries.length) {
         const id = push(ref(db,"categories")).key;
 
@@ -917,7 +1019,7 @@ function startCategoryListener() {
         return;
       }
 
-      renderCategories(data);
+      renderCategories();
 
       if (!currentCategory || !data[currentCategory]) {
         switchCategory(entries[0][0]);
@@ -930,11 +1032,11 @@ function startCategoryListener() {
   );
 }
 
-function renderCategories(data) {
+function renderCategories() {
   const list = $("category-list");
   list.innerHTML = "";
 
-  Object.entries(data || {}).forEach(([id,category]) => {
+  Object.entries(categoryCache).forEach(([id,category]) => {
     const row = document.createElement("div");
 
     row.className =
@@ -1043,6 +1145,9 @@ function switchCategory(id) {
   if (stopPresence) stopPresence();
   if (presenceTimer) clearInterval(presenceTimer);
 
+  messagesCache = [];
+  onlineCache = {};
+
   stopMessages = onValue(
     ref(db,`categoryMessages/${id}`),
     snapshot => {
@@ -1091,7 +1196,8 @@ function switchCategory(id) {
     snapshot => {
       onlineCache = snapshot.val() || {};
       renderOnline();
-    }
+    },
+    error => console.error(error)
   );
 
   renderCategories();
@@ -1451,9 +1557,13 @@ async function askAxion(question) {
     }
 
     if (!response.ok) {
+      const errorMessage =
+        typeof result.error === "string"
+          ? result.error
+          : result.error?.message || result.detail || responseText;
+
       throw new Error(
-        `Worker 오류 (${response.status}): ` +
-        (result.error || result.detail || responseText)
+        `Worker 오류 (${response.status}): ${errorMessage}`
       );
     }
 
@@ -1481,7 +1591,17 @@ async function askAxion(question) {
 }
 
 /* 테마 */
-$("theme-button").onclick = () => {
+function updateThemeLabel() {
+  const isLight = document.body.classList.contains("light");
+
+  $("theme-label").textContent =
+    isLight ? "다크 모드" : "라이트 모드";
+
+  $("theme-icon").textContent =
+    isLight ? "☾" : "☀";
+}
+
+function toggleTheme() {
   document.body.classList.toggle("light");
 
   localStorage.setItem(
@@ -1490,11 +1610,15 @@ $("theme-button").onclick = () => {
       ? "light"
       : "dark"
   );
-};
+
+  updateThemeLabel();
+}
 
 if (localStorage.getItem("axion_theme") === "light") {
   document.body.classList.add("light");
 }
+
+updateThemeLabel();
 
 /* 배경 파티클 */
 const canvas = $("particles");
