@@ -103,22 +103,28 @@ button { cursor:pointer; }
 .category-list {
   display:flex;
   flex-direction:column;
-  gap:6px;
+  gap:7px;
 }
 
+/* 둥글어진 카테고리 */
 .category {
   display:flex;
   align-items:center;
   gap:8px;
-  padding:11px;
-  border-radius:9px;
+  padding:11px 13px;
+  border-radius:14px;
   color:var(--sub);
   cursor:pointer;
+  transition:background .2s,color .2s;
 }
 
-.category:hover,
+.category:hover {
+  background:rgba(57,120,246,.10);
+  color:var(--text);
+}
+
 .category.active {
-  background:rgba(57,120,246,.16);
+  background:rgba(57,120,246,.20);
   color:var(--text);
 }
 
@@ -390,7 +396,7 @@ button { cursor:pointer; }
   margin-bottom:5px;
 }
 
-/* 채팅 이름: 테마에 따라 자동 변경 */
+/* 채팅 이름은 테마에 맞춰 변경 */
 .message-name {
   font-size:13px;
   font-weight:bold;
@@ -702,9 +708,6 @@ button { cursor:pointer; }
           <button class="small-btn" id="admin-logout">
             관리자 로그아웃
           </button>
-          <button class="small-btn" id="admin-add-category">
-            ＋ 카테고리 추가
-          </button>
         </div>
       </div>
 
@@ -991,10 +994,6 @@ $("admin-logout").onclick = () => {
 
   renderCategories();
   toast("관리자 로그아웃");
-};
-
-$("admin-add-category").onclick = () => {
-  openCategoryModal(null);
 };
 
 /* 카테고리 */
