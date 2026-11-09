@@ -815,7 +815,20 @@ button { cursor:pointer; }
   .composer-wrap { padding:10px; }
   .menu-dropdown { right:0; }
 }
-</style>
+}
+
+/* 스크롤바 숨기기 */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+</style>  
 </head>
 
 <body>
